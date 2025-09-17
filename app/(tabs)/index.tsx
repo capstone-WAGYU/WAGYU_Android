@@ -46,13 +46,11 @@ export default function HomeScreen() {
       >
         <Image source={require("../../assets/images/pinImg.png")}></Image>
         <View style={styles.reservateChildContainer}>
-          <Text style={styles.reservateText}>
-            내 위치에 가까운 동물병원은?{" "}
-          </Text>
+          <Text style={styles.reservateText}>내 위치에 가까운 동물병원은?</Text>
           <View style={styles.reservateButtonContainer}>
             <SmallCustomButton
               label="예약 하러가기"
-              onPress={() => router.push("/(tabs)/advice")}
+              onPress={() => router.push("/(tabs)/reservate")}
             />
           </View>
         </View>
@@ -75,7 +73,7 @@ const styles = StyleSheet.create({
   announceContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
-    marginVertical: 20,
+    marginVertical: 25,
   },
   announceTexts: {
     flexDirection: "column",

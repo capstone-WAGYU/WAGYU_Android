@@ -15,7 +15,7 @@ export default function MyLayout() {
         name="index"
         options={{
           headerShown: false,
-          title: "마이 ",
+          title: "마이",
         }}
       />
     </Stack>
