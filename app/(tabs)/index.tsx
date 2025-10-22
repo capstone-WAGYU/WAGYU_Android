@@ -1,16 +1,31 @@
+import AddAnnounceButton from "@/components/AddAnnounceButton";
+import ReservateCheckCard from "@/components/ReservateCheckCard";
 import SmallCustomButton from "@/components/SmallCustomButton";
 import { colors } from "@/constants";
-import Ionicons from "@expo/vector-icons/Ionicons";
+import { useAuth } from "@/context/useAuth";
+import Feather from "@expo/vector-icons/Feather";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
+  const { logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    router.replace("/auth");
+  };
   return (
     <SafeAreaView style={styles.background}>
-      <View style={styles.iconContainer}>
-        <Ionicons name="enter-outline" size={36} color="black" />
+      <View style={styles.headerContainer}>
+        <Image source={require("../../assets/images/DOGTOR.png")} />
+        <Feather
+          name="log-out"
+          size={22}
+          color="black"
+          onPress={handleLogout}
+        />
       </View>
       <View style={styles.announceContainer}>
         <View style={styles.announceTexts}>
@@ -37,14 +52,18 @@ export default function HomeScreen() {
             />
           </View>
         </View>
-        <Image source={require("../../assets/images/findImg.png")}></Image>
+        <View style={styles.findImageContainer}>
+          <Image source={require("../../assets/images/findImg.png")}></Image>
+        </View>
       </LinearGradient>
 
       <LinearGradient
         style={styles.reservateContainer}
         colors={["#79A6D2", "#B8D6EB", "#cbe0eeff"]}
       >
-        <Image source={require("../../assets/images/pinImg.png")}></Image>
+        <View style={styles.pinImageContainer}>
+          <Image source={require("../../assets/images/pinImg.png")}></Image>
+        </View>
         <View style={styles.reservateChildContainer}>
           <Text style={styles.reservateText}>내 위치에 가까운 동물병원은?</Text>
           <View style={styles.reservateButtonContainer}>
@@ -55,6 +74,12 @@ export default function HomeScreen() {
           </View>
         </View>
       </LinearGradient>
+      <ReservateCheckCard
+        label={"피부염"}
+        time={"2025.09.25 (목) 14:00 예약예정"}
+        location={"장소: 동대구 동물병원"}
+      />
+      <AddAnnounceButton label={"예약 더보기"} />
     </SafeAreaView>
   );
 }
@@ -66,9 +91,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 15,
   },
-  iconContainer: {
+  headerContainer: {
+    alignItems: "center",
     flexDirection: "row",
-    justifyContent: "flex-end",
+    justifyContent: "space-between",
   },
   announceContainer: {
     flexDirection: "row",
@@ -90,12 +116,15 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
   },
   adviceContainer: {
-    marginVertical: 10,
+    marginVertical: 5,
     borderRadius: 5,
     padding: 20,
     height: "20%",
     flexDirection: "row",
     justifyContent: "space-between",
+  },
+  findImageContainer: {
+    justifyContent: "center",
   },
 
   reservateText: {
@@ -106,7 +135,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
   },
   reservateContainer: {
-    marginVertical: 10,
+    marginVertical: 5,
     borderRadius: 5,
     padding: 20,
     height: "20%",
@@ -116,5 +145,8 @@ const styles = StyleSheet.create({
   reservateButtonContainer: {
     flexDirection: "row",
     justifyContent: "flex-end",
+  },
+  pinImageContainer: {
+    justifyContent: "center",
   },
 });

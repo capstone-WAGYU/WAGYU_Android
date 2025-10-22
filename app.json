@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "dogtor",
+    "name": "독터",
     "slug": "dogtor",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/splashImg.png",
+    "icon": "./assets/images/splashImgTest.png",
     "scheme": "dogtor",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
