@@ -1,4 +1,4 @@
-import SocialLoginButton from "@/components/SocialLoginButton";
+import SocialLoginButton from "@/components/authPage/SocialLoginButton";
 import { colors } from "@/constants";
 import { router } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";

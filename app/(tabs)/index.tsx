@@ -1,31 +1,17 @@
-import AddAnnounceButton from "@/components/AddAnnounceButton";
-import ReservateCheckCard from "@/components/ReservateCheckCard";
-import SmallCustomButton from "@/components/SmallCustomButton";
+import AddAnnounceButton from "@/components/mainPage/AddAnnounceButton";
+import ReservateCheckCard from "@/components/mainPage/ReservateCheckCard";
+import SmallCustomButton from "@/components/mainPage/SmallCustomButton";
 import { colors } from "@/constants";
-import { useAuth } from "@/context/useAuth";
-import Feather from "@expo/vector-icons/Feather";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
-  const { logout } = useAuth();
-
-  const handleLogout = () => {
-    logout();
-    router.replace("/auth");
-  };
   return (
     <SafeAreaView style={styles.background}>
       <View style={styles.headerContainer}>
         <Image source={require("../../assets/images/DOGTOR.png")} />
-        <Feather
-          name="log-out"
-          size={22}
-          color="black"
-          onPress={handleLogout}
-        />
       </View>
       <View style={styles.announceContainer}>
         <View style={styles.announceTexts}>
@@ -88,6 +74,7 @@ const styles = StyleSheet.create({
   background: {
     flex: 1,
     backgroundColor: "white",
+    marginTop: 5,
     paddingHorizontal: 15,
     paddingVertical: 15,
   },
@@ -106,7 +93,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   announceText: {
-    fontWeight: "bold",
+    lineHeight: 22,
+    fontSize: 15,
+    fontWeight: "600",
   },
   adviceText: {
     fontWeight: "bold",

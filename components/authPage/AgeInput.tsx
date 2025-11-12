@@ -2,20 +2,21 @@ import { colors } from "@/constants";
 import React, { useState } from "react";
 import { StyleSheet, TextInput, TextInputProps, View } from "react-native";
 
-interface PetInforSelectorProps extends TextInputProps {
+interface AgeInputProps extends TextInputProps {
   label?: string;
   size?: "medium" | "large";
   variant?: "filled";
 }
 
-const PetInforInput = ({
+const AgeInput = ({
   label,
   size = "large",
   variant = "filled",
   style,
   ...props
-}: PetInforSelectorProps) => {
+}: AgeInputProps) => {
   const [isFocused, setIsFocused] = useState(false);
+  const [age, setAge] = useState("");
 
   return (
     <View
@@ -27,6 +28,9 @@ const PetInforInput = ({
       ]}
     >
       <TextInput
+        keyboardType="numeric"
+        value={age}
+        onChangeText={setAge}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         placeholder={label}
@@ -56,10 +60,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   input: {
-    color: colors.MainColor,
     fontSize: 14,
     fontWeight: "bold",
   },
 });
 
-export default PetInforInput;
+export default AgeInput;

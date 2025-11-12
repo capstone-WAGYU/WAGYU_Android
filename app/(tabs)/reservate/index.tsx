@@ -1,42 +1,52 @@
-import HospitalCard from "@/components/HospitalCard";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { router } from "expo-router";
-import { Pressable, StyleSheet, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-export default function ReservateScreen() {
-  const username = "황성재";
+import Header from "@/components/reservatePage/Header";
+import HospitalCard from "@/components/reservatePage/HospitalCard";
+import SearchBar from "@/components/reservatePage/SearchBar";
 
+import { ScrollView, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+export default function ReservateScreen() {
   return (
     <SafeAreaView style={styles.background}>
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>동물병원 예약</Text>
-      </View>
-
-      <Pressable
-        style={styles.searchCard}
-        onPress={() => router.push("/(tabs)/reservate")}
-      >
-        <View style={styles.iconAndText}>
-          <Ionicons
-            name="search"
-            size={24}
-            color="black"
-            style={styles.searchIcon}
-          />
-          <Text style={styles.searchText}>검색</Text>
-        </View>
-      </Pressable>
-      <View>
-        <Text style={styles.announceText}>
-          {username}님 근처의 동물병원이예요!
-        </Text>
-      </View>
-      <View style={styles.hospitalCardContainer}>
+      <Header label="병원예약" />
+      <SearchBar label={"찾고 계시는 병원명을 입력해주세요"} />
+      <ScrollView showsVerticalScrollIndicator={false}>
         <HospitalCard
-          title="동대구동물의료센터"
-          onPress={() => router.push("/(tabs)/reservate")}
+          title={"마음을 읽어주는 마음동물병원"}
+          location={"대구광역시 수성구 화랑로 16"}
+          open={"진료중"}
         />
-      </View>
+        <HospitalCard
+          title={"마음을 읽어주는 마음동물병원"}
+          location={"대구광역시 수성구 화랑로 16"}
+          open={"진료중"}
+        />
+        <HospitalCard
+          title={"마음을 읽어주는 마음동물병원"}
+          location={"대구광역시 수성구 화랑로 16"}
+          open={"진료중"}
+        />
+        <HospitalCard
+          title={"마음을 읽어주는 마음동물병원"}
+          location={"대구광역시 수성구 화랑로 16"}
+          open={"진료중"}
+        />
+        <HospitalCard
+          title={"마음을 읽어주는 마음동물병원"}
+          location={"대구광역시 수성구 화랑로 16"}
+          open={"진료중"}
+        />
+        <HospitalCard
+          title={"마음을 읽어주는 마음동물병원"}
+          location={"대구광역시 수성구 화랑로 16"}
+          open={"진료중"}
+        />
+        <HospitalCard
+          title={"마음을 읽어주는 마음동물병원"}
+          location={"대구광역시 수성구 화랑로 16"}
+          open={"진료중"}
+        />
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -47,38 +57,18 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     paddingHorizontal: 15,
     paddingVertical: 15,
+    marginBottom: 36,
   },
-  titleContainer: {
-    paddingVertical: 15,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  searchCard: {
-    backgroundColor: "#EFEFEF",
-    width: "100%",
-    height: "6%",
-    borderRadius: 5,
-    paddingHorizontal: 15,
-    justifyContent: "center",
-  },
+  searchCard: {},
   searchIcon: {
     color: "#CCCCCC",
     fontSize: 20,
     paddingHorizontal: 2,
   },
+
   iconAndText: {
     flexDirection: "row",
   },
-  searchText: {
-    color: "#CCCCCC",
-    paddingHorizontal: 2,
-  },
-  announceText: {
-    // fontSize: 15,
-    fontWeight: "bold",
-    paddingVertical: 20,
-  },
+
   hospitalCardContainer: {},
 });

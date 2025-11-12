@@ -1,7 +1,9 @@
-import AnnouncePetInforText from "@/components/AnnouncePetInforText";
-import NextButton from "@/components/NextButton";
-import PetInforHeader from "@/components/PetInforHeader";
-import PetInforInput from "@/components/PetInforInput";
+import AgeInput from "@/components/authPage/AgeInput";
+import AnnouncePetInforText from "@/components/authPage/AnnouncePetInforText";
+import DropDown from "@/components/authPage/DropDown";
+import NextButton from "@/components/authPage/NextButton";
+import PetInforHeader from "@/components/authPage/PetInforHeader";
+import PetInforInput from "@/components/authPage/PetInforInput";
 import { router } from "expo-router";
 import React from "react";
 import { StyleSheet, View } from "react-native";
@@ -18,8 +20,8 @@ export default function petInfor() {
       <AnnouncePetInforText Label={"반려동물 정보를 입력해주세요"} />
       <PetInforInput label={"이름"} />
       <PetInforInput label={"품종"} />
-      <PetInforInput label={"나이"} />
-      <PetInforInput label={"성별"} />
+      <AgeInput label={"나이"} />
+      <DropDown label={"성별"} />
       <View style={styles.voidContainer}>
         <NextButton label={"입력 완료"} onPress={handleRouter} />
       </View>

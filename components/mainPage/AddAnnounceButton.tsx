@@ -41,6 +41,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     flexDirection: "row",
+    gap: 3,
   },
   large: {
     width: "100%",
@@ -52,9 +53,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   text: {
+    fontSize: 13,
     color: colors.GRAY0,
     fontWeight: 500,
   },
+  // addContainer: {
+  //   flexDirection: "row",
+  //   gap: 3,
+  // },
   pressed: {
     opacity: 0.8,
   },

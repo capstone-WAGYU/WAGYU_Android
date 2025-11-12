@@ -40,7 +40,7 @@ function SocialLoginButton({
           backgroundColor,
           borderWidth: backgroundColor === colors.WHITE ? 1 : 0,
           borderColor:
-            backgroundColor === colors.WHITE ? colors.GRAY : "transparent",
+            backgroundColor === colors.WHITE ? colors.GRAY2 : "transparent",
         },
         pressed && styles.pressed,
       ]}

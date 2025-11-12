@@ -1,21 +1,23 @@
 import { colors } from "@/constants";
+import { Picker } from "@react-native-picker/picker";
 import React, { useState } from "react";
-import { StyleSheet, TextInput, TextInputProps, View } from "react-native";
+import { StyleSheet, TextInputProps, View } from "react-native";
 
-interface PetInforInputProps extends TextInputProps {
+interface DropDownProps extends TextInputProps {
   label?: string;
   size?: "medium" | "large";
   variant?: "filled";
 }
 
-const PetInforInput = ({
+const DropDown = ({
   label,
   size = "large",
   variant = "filled",
   style,
   ...props
-}: PetInforInputProps) => {
+}: DropDownProps) => {
   const [isFocused, setIsFocused] = useState(false);
+  const [gender, setGender] = useState("");
 
   return (
     <View
@@ -26,14 +28,21 @@ const PetInforInput = ({
         styles[variant],
       ]}
     >
-      <TextInput
+      <Picker
+        selectedValue={gender}
+        onValueChange={(itemValue: React.SetStateAction<string>) =>
+          setGender(itemValue)
+        }
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         placeholder={label}
         placeholderTextColor={colors.GRAY2}
         style={[styles.input, style]}
         {...props}
-      />
+      >
+        <Picker.Item label="남성" value="male" />
+        <Picker.Item label="여성" value="female" />
+      </Picker>
     </View>
   );
 };
@@ -56,10 +65,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   input: {
-    color: colors.MainColor,
     fontSize: 14,
     fontWeight: "bold",
   },
 });
 
-export default PetInforInput;
+export default DropDown;

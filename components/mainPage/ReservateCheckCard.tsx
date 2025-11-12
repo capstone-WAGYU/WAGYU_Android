@@ -1,6 +1,6 @@
 import { colors } from "@/constants";
 import React from "react";
-import { PressableProps, StyleSheet, Text, View } from "react-native";
+import { Image, PressableProps, StyleSheet, Text, View } from "react-native";
 
 interface ReservateCheckCardProps extends PressableProps {
   label: string;
@@ -21,7 +21,12 @@ function ReservateCheckCard({
   return (
     <View style={styles.container}>
       <View style={styles.acheImgContainer}>
-        <View style={styles.acheImg}></View>
+        <View style={styles.acheImg}>
+          <Image
+            source={require("../../assets/images/teethImg.png")}
+            style={{ width: 40, height: 40, marginRight: 4 }}
+          />
+        </View>
         <Text style={styles.text}>{label}</Text>
       </View>
       <View style={styles.reservateAnnounceContainer}>
@@ -38,22 +43,26 @@ const styles = StyleSheet.create({
     backgroundColor: colors.GRAY4,
     flexDirection: "row",
     height: "15%",
+    padding: 20,
     marginVertical: 5,
+
+    justifyContent: "space-between",
   },
   acheImgContainer: {
     justifyContent: "center",
     alignItems: "center",
-    flex: 2,
+    paddingHorizontal: 10,
+    // flex: 2,
   },
   acheImg: {
-    backgroundColor: colors.GRAY2,
+    // backgroundColor: colors.GRAY2,
     width: 40,
     height: 40,
     flexDirection: "column",
-    borderRadius: "100%",
+    borderRadius: 100,
   },
   reservateAnnounceContainer: {
-    flex: 4,
+    // flex: 4,
     gap: 5,
     flexDirection: "column",
     justifyContent: "center",
@@ -64,6 +73,7 @@ const styles = StyleSheet.create({
   },
   time: {
     fontWeight: "600",
+    fontSize: 16,
   },
   text: {
     color: colors.GRAY1,
