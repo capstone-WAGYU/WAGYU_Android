@@ -13,6 +13,8 @@ const colors = {
   GRAY7: "rgb(142, 142, 143)",
   GRAY8: "#737373",
   GRAY9: "#DDDDDD",
+  GRAY10: "#888888",
+  GRAY11: "#555555",
   Black: "#000000",
   Naver: "#02C95A",
   Kakao: "#F7D600",

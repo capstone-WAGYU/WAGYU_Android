@@ -12,8 +12,8 @@ export default function AdviceScreen() {
       <View style={styles.chatContainer}>
         <Header label={"독터봇"} />
         <DateLine date="2025-11-12(수)" />
-        <ChatUser message={"인규가 요즘 짖지도 않고 누워만 있어..."} />
-        <ChatBot message={"초밥을 사서 먹이세요"} />
+        <ChatUser message={"뽀삐가 요즘 짖지도 않고 누워만 있어..."} />
+        <ChatBot message={"약을 사서 먹이세요"} />
         <ChatUser message={"닥터봇 고마워!!!"} />
         <ChatBot message={"언제든지 상담해 주세요 :)"} />
       </View>

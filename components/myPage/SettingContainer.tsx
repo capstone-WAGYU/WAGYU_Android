@@ -16,15 +16,22 @@ function SettingContainer({ size = "large", ...props }: SettingContainerProps) {
     logout();
     router.replace("/auth");
   };
+  const handleDelAccount = () => {
+    router.push("/delAccount");
+  };
+
+  const handleAddress = () => {
+    router.push("/address");
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>설정</Text>
       </View>
 
-      <Setting label={"주소관리"} />
-      <Setting label={"프로필 수정"} />
-      <Setting label={"탈퇴하기"} />
+      <Setting onPress={handleAddress} label={"주소관리"} />
+      <Setting onPress={handleDelAccount} label={"탈퇴하기"} />
       <Setting onPress={handleLogout} label={"로그아웃"} />
     </View>
   );

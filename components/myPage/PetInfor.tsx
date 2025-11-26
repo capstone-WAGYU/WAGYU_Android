@@ -1,17 +1,26 @@
+import { usePetStore } from "@/store/petStore";
 import React from "react";
-import { PressableProps, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import PetCard from "./PetCard";
 import PetCardAdd from "./PetCardAdd";
-interface PetInforProps extends PressableProps {
-  variant?: "filled";
-}
 
-function PetInfor({ variant = "filled", ...props }: PetInforProps) {
+function PetInfor() {
+  const pets = usePetStore((state) => state.pets);
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>반려동물</Text>
 
-      <PetCard name={"최인규"} breed={"치와와"} date={"2025.09.09"} />
+      {pets.map((pet, index) => (
+        <PetCard
+          key={index}
+          name={pet.name}
+          breed={pet.breed}
+          date={"2025.11.26"}
+          // date={`${pet.age} 살`}
+        />
+      ))}
+
       <PetCardAdd />
     </View>
   );
@@ -23,16 +32,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     flexDirection: "column",
   },
-  // titleContainer: {
-  //   flex: 1,
-  // },
   title: {
     fontSize: 14,
     paddingVertical: 12,
     fontWeight: "bold",
-  },
-  pressed: {
-    opacity: 0.3,
   },
 });
 

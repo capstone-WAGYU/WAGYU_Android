@@ -6,7 +6,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Login() {
   const handleRouter = () => {
-    // router.push("/(tabs)");
     router.push("/auth/petInfor");
   };
 

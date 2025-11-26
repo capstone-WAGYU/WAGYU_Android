@@ -1,12 +1,11 @@
 import { colors } from "@/constants";
 import { Stack } from "expo-router";
-import React from "react";
 
-export default function AuthLayout() {
+export default function MyLayout() {
   return (
     <Stack
       screenOptions={{
-        headerTintColor: colors.MainColor,
+        headerShown: false,
         contentStyle: {
           backgroundColor: colors.WHITE,
         },
@@ -15,15 +14,8 @@ export default function AuthLayout() {
       <Stack.Screen
         name="index"
         options={{
-          title: "로그인",
           headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="petInfor"
-        options={{
-          title: "동물정보",
-          headerShown: false,
+          title: "팻프로필",
         }}
       />
     </Stack>

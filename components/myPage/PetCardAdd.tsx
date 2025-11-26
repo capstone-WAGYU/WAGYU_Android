@@ -1,5 +1,6 @@
 import { colors } from "@/constants";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { router } from "expo-router";
 import React from "react";
 import {
   Image,
@@ -15,8 +16,15 @@ interface PetCardAddProps extends PressableProps {
 }
 
 function PetCardAdd({ size = "large", ...props }: PetCardAddProps) {
+  const petProfileHandler = () => {
+    router.push("/petProfile");
+  };
   return (
-    <Pressable style={({ pressed }) => pressed && styles.pressed} {...props}>
+    <Pressable
+      style={({ pressed }) => pressed && styles.pressed}
+      {...props}
+      onPress={petProfileHandler}
+    >
       <View style={styles.container}>
         <View style={styles.InforContainer}>
           <View style={styles.imgContainer}>
@@ -45,7 +53,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingVertical: 22,
     paddingHorizontal: 8,
-    marginVertical: 12,
+    marginVertical: 4,
     borderColor: colors.GRAY3,
     borderWidth: 1,
     height: 110,

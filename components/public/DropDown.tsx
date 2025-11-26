@@ -1,23 +1,26 @@
 import { colors } from "@/constants";
 import { Picker } from "@react-native-picker/picker";
 import React, { useState } from "react";
-import { StyleSheet, TextInputProps, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
-interface DropDownProps extends TextInputProps {
+interface DropDownProps {
   label?: string;
   size?: "medium" | "large";
   variant?: "filled";
+  value: string;
+  onChange: (value: string) => void;
+  style?: any;
 }
 
 const DropDown = ({
-  label,
+  // label,
   size = "large",
   variant = "filled",
   style,
-  ...props
+  value,
+  onChange,
 }: DropDownProps) => {
   const [isFocused, setIsFocused] = useState(false);
-  const [gender, setGender] = useState("");
 
   return (
     <View
@@ -29,17 +32,13 @@ const DropDown = ({
       ]}
     >
       <Picker
-        selectedValue={gender}
-        onValueChange={(itemValue: React.SetStateAction<string>) =>
-          setGender(itemValue)
-        }
+        selectedValue={value}
+        onValueChange={(itemValue: string) => onChange(itemValue)}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
-        placeholder={label}
-        placeholderTextColor={colors.GRAY2}
         style={[styles.input, style]}
-        {...props}
       >
+        {/* <Picker.Item label={label ?? "성별"} value="" /> */}
         <Picker.Item label="남성" value="male" />
         <Picker.Item label="여성" value="female" />
       </Picker>

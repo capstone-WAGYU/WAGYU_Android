@@ -1,16 +1,17 @@
-import AnnouncePetInforText from "@/components/authPage/AnnouncePetInforText";
 import NextButton from "@/components/authPage/NextButton";
-import PetInforHeader from "@/components/authPage/PetInforHeader";
+import ImageUpload from "@/components/myPage/petProfilePage/ImageUpload";
 import AgeInput from "@/components/public/AgeInput";
 import DropDown from "@/components/public/DropDown";
+import Header from "@/components/public/Header";
 import PetInforInput from "@/components/public/PetInforInput";
+import { colors } from "@/constants";
 import { usePetStore } from "@/store/petStore";
 import { router } from "expo-router";
-import React, { useState } from "react";
-import { Alert, StyleSheet, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useState } from "react";
+import { Alert, StyleSheet, Text, View } from "react-native";
 
-export default function PetInfor() {
+import { SafeAreaView } from "react-native-safe-area-context";
+export default function PetProfile() {
   const [name, setName] = useState("");
   const [breed, setBreed] = useState("");
   const [age, setAge] = useState("");
@@ -33,25 +34,29 @@ export default function PetInfor() {
       gender,
     });
 
-    router.push("/(tabs)");
+    router.push("/(tabs)/my");
   };
 
   return (
     <SafeAreaView style={styles.background}>
-      <PetInforHeader />
-      <AnnouncePetInforText Label={"반려동물 정보를 입력해주세요"} />
+      <Header label="" />
+      <View style={styles.textContainer}>
+        <Text style={styles.text}>
+          가이드에 맞춰 <Text style={styles.profile}>프로필</Text>을
+          완성해보세요!
+        </Text>
+      </View>
+      <View style={styles.imgContainer}>
+        <ImageUpload />
+      </View>
 
       <PetInforInput label={"이름"} value={name} onChangeText={setName} />
       <PetInforInput label={"품종"} value={breed} onChangeText={setBreed} />
       <AgeInput label={"나이"} value={age} onChangeText={setAge} />
       <DropDown label={"성별"} value={gender} onChange={setGender} />
 
-      <View style={styles.voidContainer}>
-        <NextButton
-          label={"입력 완료"}
-          onPress={handleRouter}
-          // disabled={!isAllFilled}
-        />
+      <View style={styles.goBottom}>
+        <NextButton label={"입력 완료"} onPress={handleRouter} />
       </View>
     </SafeAreaView>
   );
@@ -61,12 +66,30 @@ const styles = StyleSheet.create({
   background: {
     flex: 1,
     backgroundColor: "white",
-    paddingHorizontal: 15,
     paddingVertical: 15,
+    paddingHorizontal: 15,
   },
-  voidContainer: {
-    flex: 1,
+  text: {
+    fontWeight: "bold",
+    fontSize: 15,
+  },
+  textContainer: {
     alignItems: "center",
-    justifyContent: "flex-end",
+  },
+  profile: {
+    color: colors.MainColor,
+  },
+  img: {
+    width: 120,
+    height: 120,
+    objectFit: "cover",
+  },
+  imgContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    paddingVertical: 30,
+  },
+  goBottom: {
+    marginTop: "auto",
   },
 });

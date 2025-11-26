@@ -1,5 +1,6 @@
 import { colors } from "@/constants";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { router } from "expo-router";
 import React from "react";
 import {
   Image,
@@ -11,8 +12,8 @@ import {
 } from "react-native";
 
 interface PetCardProps extends PressableProps {
-  name: string;
-  breed: string;
+  name: any;
+  breed: any;
   date: string;
   size?: "medium" | "large";
 }
@@ -24,8 +25,16 @@ function PetCard({
   size = "large",
   ...props
 }: PetCardProps) {
+  const petProfileHandler = () => {
+    router.push("/petProfile");
+  };
+
   return (
-    <Pressable style={({ pressed }) => pressed && styles.pressed} {...props}>
+    <Pressable
+      style={({ pressed }) => pressed && styles.pressed}
+      {...props}
+      onPress={petProfileHandler}
+    >
       <View style={styles.container}>
         <View style={styles.InforContainer}>
           <View style={styles.imgContainer}>
@@ -55,6 +64,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingVertical: 22,
+    marginVertical: 4,
     paddingHorizontal: 8,
     borderColor: colors.GRAY3,
     borderWidth: 1,
