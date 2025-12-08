@@ -1,11 +1,16 @@
-import Header from "@/components/reservatePage/Header";
-import HospitalCard from "@/components/reservatePage/HospitalCard";
-import SearchBar from "@/components/reservatePage/SearchBar";
+import Header from "@/components/reservationPage/Header";
+import HospitalCard from "@/components/reservationPage/HospitalCard";
+import SearchBar from "@/components/reservationPage/SearchBar";
+import { router } from "expo-router";
 
 import { ScrollView, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ReservateScreen() {
+  const handleRouter = () => {
+    router.push("/hospitalReservation");
+  };
+
   return (
     <SafeAreaView style={styles.background}>
       <Header label="병원예약" />
@@ -15,36 +20,37 @@ export default function ReservateScreen() {
           title={"마음을 읽어주는 마음동물병원"}
           location={"대구광역시 수성구 화랑로 16"}
           open={"진료중"}
+          onPress={handleRouter}
         />
         <HospitalCard
           title={"마음을 읽어주는 마음동물병원"}
           location={"대구광역시 수성구 화랑로 16"}
           open={"진료중"}
+          onPress={handleRouter}
         />
         <HospitalCard
           title={"마음을 읽어주는 마음동물병원"}
           location={"대구광역시 수성구 화랑로 16"}
           open={"진료중"}
+          onPress={handleRouter}
         />
         <HospitalCard
           title={"마음을 읽어주는 마음동물병원"}
           location={"대구광역시 수성구 화랑로 16"}
           open={"진료중"}
+          onPress={handleRouter}
         />
         <HospitalCard
           title={"마음을 읽어주는 마음동물병원"}
           location={"대구광역시 수성구 화랑로 16"}
           open={"진료중"}
+          onPress={handleRouter}
         />
         <HospitalCard
           title={"마음을 읽어주는 마음동물병원"}
           location={"대구광역시 수성구 화랑로 16"}
           open={"진료중"}
-        />
-        <HospitalCard
-          title={"마음을 읽어주는 마음동물병원"}
-          location={"대구광역시 수성구 화랑로 16"}
-          open={"진료중"}
+          onPress={handleRouter}
         />
       </ScrollView>
     </SafeAreaView>

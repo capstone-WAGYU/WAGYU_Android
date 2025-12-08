@@ -48,7 +48,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="reservate"
+        name="reservation"
         options={{
           title: "예약",
           tabBarIcon: ({ color, focused }) => (

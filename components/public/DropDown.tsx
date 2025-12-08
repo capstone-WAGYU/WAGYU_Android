@@ -39,8 +39,8 @@ const DropDown = ({
         style={[styles.input, style]}
       >
         {/* <Picker.Item label={label ?? "성별"} value="" /> */}
-        <Picker.Item label="남성" value="male" />
-        <Picker.Item label="여성" value="female" />
+        <Picker.Item label="수컷" value="male" />
+        <Picker.Item label="암컷" value="female" />
       </Picker>
     </View>
   );
