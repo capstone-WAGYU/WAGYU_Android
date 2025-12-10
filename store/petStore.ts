@@ -5,6 +5,7 @@ export interface PetData {
   breed: string;
   age: string;
   gender: string;
+  disease: string;
 }
 
 interface PetStore {

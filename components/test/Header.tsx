@@ -1,3 +1,4 @@
+import { colors } from "@/constants";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
 import React from "react";
@@ -19,19 +20,21 @@ function Header({ label, variant = "filled", ...props }: HeaderProps) {
   };
 
   return (
-    <View style={styles.container}>
-      <Pressable
-        style={({ pressed }) => [styles.icon, pressed && styles.pressed]}
-        {...props}
-        onPress={goBack}
-      >
-        <MaterialIcons name="arrow-back" size={24} color="black" />
-      </Pressable>
+    <View>
+      <View style={styles.container}>
+        <Pressable
+          style={({ pressed }) => [styles.icon, pressed && styles.pressed]}
+          {...props}
+          onPress={goBack}
+        >
+          <MaterialIcons name="arrow-back" size={24} color="black" />
+        </Pressable>
 
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>{label}</Text>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>{label}</Text>
+        </View>
+        <View style={styles.emtiy} />
       </View>
-      <View style={styles.emtiy} />
     </View>
   );
 }
@@ -40,9 +43,13 @@ const styles = StyleSheet.create({
   container: {
     paddingVertical: 16,
     flexDirection: "row",
+    borderBottomWidth: 1,
+    borderColor: colors.GRAY6,
+    paddingHorizontal: 15,
   },
   titleContainer: {
-    alignItems: "center",
+    alignItems: "flex-start",
+    paddingLeft: 12,
     flex: 1,
   },
   title: {
@@ -55,7 +62,6 @@ const styles = StyleSheet.create({
   icon: {
     flexDirection: "row",
     justifyContent: "flex-start",
-    flex: 1,
   },
   pressed: {
     opacity: 0.3,

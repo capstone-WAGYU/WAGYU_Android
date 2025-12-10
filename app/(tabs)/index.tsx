@@ -55,7 +55,7 @@ export default function HomeScreen() {
           <View style={styles.reservateButtonContainer}>
             <SmallCustomButton
               label="예약 하러가기"
-              onPress={() => router.push("/(tabs)/reservate")}
+              onPress={() => router.push("/(tabs)/reservation")}
             />
           </View>
         </View>

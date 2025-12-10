@@ -3,23 +3,24 @@ import { Picker } from "@react-native-picker/picker";
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 
-interface DropDownProps {
+interface DiseaseSelectProps {
   label?: string;
   size?: "medium" | "large";
   variant?: "filled";
   value: string;
+  options: string[];
   onChange: (value: string) => void;
   style?: any;
 }
 
-const DropDown = ({
-  // label,
+const DiseaseSelect = ({
   size = "large",
   variant = "filled",
   style,
   value,
   onChange,
-}: DropDownProps) => {
+  options,
+}: DiseaseSelectProps) => {
   const [isFocused, setIsFocused] = useState(false);
 
   return (
@@ -38,9 +39,12 @@ const DropDown = ({
         onBlur={() => setIsFocused(false)}
         style={[styles.input, style]}
       >
-        {/* <Picker.Item label={label ?? "성별"} value="" /> */}
-        <Picker.Item label="수컷" value="male" />
-        <Picker.Item label="암컷" value="female" />
+        {/* 기본값 */}
+        <Picker.Item label="없음" value="" />
+
+        {options.map((item, idx) => (
+          <Picker.Item key={idx} label={item} value={item} />
+        ))}
       </Picker>
     </View>
   );
@@ -69,4 +73,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DropDown;
+export default DiseaseSelect;

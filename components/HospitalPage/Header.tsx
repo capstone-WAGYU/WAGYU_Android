@@ -41,7 +41,7 @@ function Header({ label, variant = "filled", ...props }: HeaderProps) {
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 16,
+    paddingBottom: 12,
     flexDirection: "row",
     borderBottomWidth: 1,
     borderColor: colors.GRAY6,

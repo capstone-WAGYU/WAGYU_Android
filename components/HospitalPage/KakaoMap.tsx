@@ -51,8 +51,8 @@ export default function KakaoMap() {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 25,
-    paddingVertical: 15,
+    // paddingHorizontal: 25,
+    paddingBottom: 15,
   },
   webViewContainer: {
     width: "100%",

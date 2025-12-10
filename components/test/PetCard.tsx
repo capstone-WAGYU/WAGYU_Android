@@ -42,7 +42,7 @@ function PetCard({
           </View>
           <View style={styles.textContainer}>
             <Text style={styles.nameText}>{name}</Text>
-            <Text style={styles.breedText}>{breed}</Text>
+            <Text style={styles .breedText}>{breed}</Text>
             <Text style={styles.breedDate}>등록일: {date}</Text>
           </View>
         </View>

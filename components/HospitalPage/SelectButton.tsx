@@ -1,36 +1,70 @@
 import { colors } from "@/constants";
-import React from "react";
-import {
-  Pressable,
-  PressableProps,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-interface SelectButtonProps extends PressableProps {
-  variant?: "filled";
+import React, { useState } from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+
+interface SelectButtonProps {
+  onPressReservation: () => void;
+  onPressDetail: () => void;
+  onPressReview: () => void;
 }
 
-function SelectButton({ variant = "filled", ...props }: SelectButtonProps) {
+function SelectButton({
+  onPressReservation,
+  onPressDetail,
+  onPressReview,
+}: SelectButtonProps) {
+  const [selected, setSelected] = useState<"reservation" | "detail" | "review">(
+    "reservation"
+  );
+
   return (
     <View style={styles.container}>
+      {/* 예약하기 */}
       <Pressable
-        style={({ pressed }) => [pressed && styles.pressed]}
-        {...props}
+        onPress={() => {
+          setSelected("reservation");
+          onPressReservation();
+        }}
+        style={[styles.tab, selected === "reservation" && styles.selectedTab]}
       >
-        <Text>예약하기</Text>
+        <Text
+          style={[
+            styles.text,
+            selected === "reservation" && styles.selectedText,
+          ]}
+        >
+          예약하기
+        </Text>
       </Pressable>
+
+      {/* 상세정보 */}
       <Pressable
-        style={({ pressed }) => [pressed && styles.pressed]}
-        {...props}
+        onPress={() => {
+          setSelected("detail");
+          onPressDetail();
+        }}
+        style={[styles.tab, selected === "detail" && styles.selectedTab]}
       >
-        <Text>상세정보</Text>
+        <Text
+          style={[styles.text, selected === "detail" && styles.selectedText]}
+        >
+          상세정보
+        </Text>
       </Pressable>
+
+      {/* 리뷰 */}
       <Pressable
-        style={({ pressed }) => [pressed && styles.pressed]}
-        {...props}
+        onPress={() => {
+          setSelected("review");
+          onPressReview();
+        }}
+        style={[styles.tab, selected === "review" && styles.selectedTab]}
       >
-        <Text>리뷰보기</Text>
+        <Text
+          style={[styles.text, selected === "review" && styles.selectedText]}
+        >
+          리뷰보기
+        </Text>
       </Pressable>
     </View>
   );
@@ -39,14 +73,32 @@ function SelectButton({ variant = "filled", ...props }: SelectButtonProps) {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.GRAY4,
-    justifyContent: "space-around",
     flexDirection: "row",
-    paddingVertical: 16,
+    // padding: 4,
     marginHorizontal: 25,
-    borderRadius: 5,
+    borderRadius: 12,
   },
-  pressed: {
-    opacity: 0.3,
+
+  tab: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    borderRadius: 10,
+  },
+
+  selectedTab: {
+    backgroundColor: "#4D4D4D",
+  },
+
+  text: {
+    color: "#666",
+    fontSize: 15,
+  },
+
+  selectedText: {
+    color: "#fff",
+    fontWeight: "600",
   },
 });
 
