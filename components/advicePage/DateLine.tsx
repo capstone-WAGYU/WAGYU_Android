@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
   },
   grayLine: {
     height: 1,
-    width: "100%",
+    width: "32%",
     backgroundColor: colors.GRAY0,
   },
   dateText: {

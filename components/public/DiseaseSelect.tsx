@@ -1,15 +1,22 @@
 import { colors } from "@/constants";
-import { Picker } from "@react-native-picker/picker";
+import Checkbox from "expo-checkbox";
 import React, { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import {
+  FlatList,
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 interface DiseaseSelectProps {
   label?: string;
   size?: "medium" | "large";
   variant?: "filled";
-  value: string;
+  value: string[];
   options: string[];
-  onChange: (value: string) => void;
+  onChange: (value: string[]) => void;
   style?: any;
 }
 
@@ -22,31 +29,94 @@ const DiseaseSelect = ({
   options,
 }: DiseaseSelectProps) => {
   const [isFocused, setIsFocused] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [tempValue, setTempValue] = useState<string[]>(value);
+
+  const toggleItem = (item: string) => {
+    setTempValue((prev) =>
+      prev.includes(item) ? prev.filter((v) => v !== item) : [...prev, item]
+    );
+  };
 
   return (
-    <View
-      style={[
-        styles.wrapper,
-        { borderBottomColor: isFocused ? colors.MainColor : colors.GRAY3 },
-        styles[size],
-        styles[variant],
-      ]}
-    >
-      <Picker
-        selectedValue={value}
-        onValueChange={(itemValue: string) => onChange(itemValue)}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        style={[styles.input, style]}
+    <>
+      <TouchableOpacity
+        activeOpacity={0.8}
+        onPress={() => {
+          setTempValue(value);
+          setVisible(true);
+          setIsFocused(true);
+        }}
+        style={[
+          styles.wrapper,
+          { borderBottomColor: isFocused ? colors.MainColor : colors.GRAY3 },
+          styles[size],
+          styles[variant],
+        ]}
       >
-        {/* 기본값 */}
-        <Picker.Item label="없음" value="" />
+        <Text style={styles.input}>
+          {value.length ? value.join(", ") : "유전병 선택"}
+        </Text>
+      </TouchableOpacity>
 
-        {options.map((item, idx) => (
-          <Picker.Item key={idx} label={item} value={item} />
-        ))}
-      </Picker>
-    </View>
+      <Modal transparent animationType="fade" visible={visible}>
+        <View style={styles.overlay}>
+          <View style={styles.modalContainer}>
+            <View style={styles.titleContainer}>
+              <Text style={styles.title}>유전병 선택</Text>
+            </View>
+
+            {options.length === 0 ? (
+              <View style={styles.item}>
+                <Text style={styles.nullInfo}>* 유전병이 존재하지 않음</Text>
+              </View>
+            ) : (
+              <FlatList
+                data={options}
+                keyExtractor={(item) => item}
+                renderItem={({ item }) => {
+                  const checked = tempValue.includes(item);
+
+                  return (
+                    <TouchableOpacity
+                      style={styles.item}
+                      onPress={() => toggleItem(item)}
+                    >
+                      <Text>{item}</Text>
+                      <Checkbox
+                        value={checked}
+                        onValueChange={() => toggleItem(item)}
+                      />
+                    </TouchableOpacity>
+                  );
+                }}
+              />
+            )}
+
+            <View style={styles.footer}>
+              {/* <TouchableOpacity
+                onPress={() => {
+                  setVisible(false);
+                  setIsFocused(false);
+                }}
+              >
+                <Text style={styles.cancel}>취소</Text>
+              </TouchableOpacity> */}
+
+              <TouchableOpacity
+                onPress={() => {
+                  onChange(tempValue);
+                  setVisible(false);
+                  setIsFocused(false);
+                }}
+              >
+                <Text style={styles.confirm}>확인</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    </>
   );
 };
 
@@ -56,21 +126,54 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     width: "100%",
     marginVertical: 20,
-  },
-  large: {
-    height: 38,
-  },
-  medium: {
-    height: 32,
-  },
-  filled: {
-    backgroundColor: colors.WHITE,
     borderBottomWidth: 1,
   },
+  large: { height: 38 },
+  medium: { height: 32 },
+  filled: { backgroundColor: colors.WHITE },
+
   input: {
     fontSize: 14,
-    fontWeight: "bold",
+    color: colors.Black,
   },
+
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContainer: {
+    width: "90%",
+    maxHeight: "70%",
+    backgroundColor: colors.WHITE,
+    borderRadius: 16,
+    padding: 20,
+  },
+  nullInfo: {
+    color: "red",
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 12,
+  },
+  titleContainer: {
+    alignItems: "center",
+  },
+  item: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingVertical: 12,
+  },
+  footer: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    gap: 20,
+    marginTop: 16,
+  },
+
+  confirm: { color: colors.MainColor, fontWeight: "bold" },
 });
 
 export default DiseaseSelect;

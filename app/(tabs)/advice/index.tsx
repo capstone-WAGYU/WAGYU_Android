@@ -27,12 +27,12 @@ const styles = StyleSheet.create({
   background: {
     flex: 1,
     backgroundColor: "white",
-    paddingHorizontal: 15,
     paddingVertical: 15,
     marginBottom: 40,
   },
   chatContainer: {
     flex: 1,
+    paddingHorizontal: 15,
     justifyContent: "flex-start",
   },
 });
