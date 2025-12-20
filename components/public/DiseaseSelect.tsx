@@ -94,15 +94,6 @@ const DiseaseSelect = ({
             )}
 
             <View style={styles.footer}>
-              {/* <TouchableOpacity
-                onPress={() => {
-                  setVisible(false);
-                  setIsFocused(false);
-                }}
-              >
-                <Text style={styles.cancel}>취소</Text>
-              </TouchableOpacity> */}
-
               <TouchableOpacity
                 onPress={() => {
                   onChange(tempValue);

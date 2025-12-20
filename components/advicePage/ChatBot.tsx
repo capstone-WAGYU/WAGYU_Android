@@ -31,6 +31,7 @@ const styles = StyleSheet.create({
     gap: 14,
   },
   messageContainer: {
+    maxWidth: "90%",
     marginVertical: 12,
     padding: 12,
     borderTopRightRadius: 8,

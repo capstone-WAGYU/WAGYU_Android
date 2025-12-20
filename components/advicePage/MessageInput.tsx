@@ -1,23 +1,42 @@
 import { colors } from "@/constants";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import React from "react";
-import { PressableProps, StyleSheet, TextInput, View } from "react-native";
+import { Pressable, StyleSheet, TextInput, View } from "react-native";
 
-interface MessageInputProps extends PressableProps {
+interface MessageInputProps {
   label: string;
-  size?: "medium" | "large";
-  variant?: "filled";
+  value: string;
+  disabled?: boolean;
+  onChangeText: (text: string) => void;
+  onSubmit: () => void;
 }
 
-function MessageInput({ label }: MessageInputProps) {
+function MessageInput({
+  label,
+  value,
+  onChangeText,
+  onSubmit,
+  disabled = false,
+}: MessageInputProps) {
   return (
     <View style={styles.container}>
-      <TextInput placeholder={label} style={styles.barContainer} />
-      <View style={styles.iconContainer}>
-        <View style={styles.blueCircle}>
+      <TextInput
+        placeholder={label}
+        style={styles.barContainer}
+        value={value}
+        onChangeText={onChangeText}
+        editable={!disabled}
+      />
+
+      <Pressable
+        style={styles.iconContainer}
+        onPress={onSubmit}
+        disabled={disabled}
+      >
+        <View style={[styles.blueCircle, disabled && { opacity: 0.5 }]}>
           <MaterialIcons name="keyboard-arrow-up" size={24} color="white" />
         </View>
-      </View>
+      </Pressable>
     </View>
   );
 }

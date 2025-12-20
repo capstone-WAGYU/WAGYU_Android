@@ -19,7 +19,7 @@ export default function PetInfor() {
   const [breed, setBreed] = useState("");
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
-  const [disease, setDisease] = useState("");
+  const [disease, setDisease] = useState<string[]>([]);
 
   const [diseaseOptions, setDiseaseOptions] = useState<string[]>([]);
 
@@ -28,16 +28,13 @@ export default function PetInfor() {
   const handleBreedChange = (value: string) => {
     setBreed(value);
 
-    // 품종에 맞는 유전병 리스트 가져오기
     const diseases = breedDiseaseMap[value] ?? [];
     setDiseaseOptions(diseases);
 
-    // 품종이 변경되면 유전병 선택 초기화
-    setDisease("");
+    setDisease([]);
   };
 
-  // 필수 필드: 이름, 품종, 나이
-  const isAllFilled = name.trim() && breed && age;
+  const isAllFilled = Boolean(name.trim() && breed && age);
 
   const handleRouter = () => {
     if (!isAllFilled) {
@@ -50,7 +47,7 @@ export default function PetInfor() {
       breed,
       age,
       gender: gender || "미선택",
-      disease: disease || "없음",
+      disease: disease.length ? disease.join(", ") : "없음",
     });
 
     router.push("/(tabs)");
@@ -69,7 +66,7 @@ export default function PetInfor() {
 
       <AgeInput label={"나이"} value={age} onChangeText={setAge} />
 
-      <PetType label="품종" value={breed} onChange={handleBreedChange} />
+      <PetType value={breed} onChange={handleBreedChange} />
 
       <PetSex label={"성별"} value={gender} onChange={setGender} />
 

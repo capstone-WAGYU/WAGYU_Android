@@ -23,6 +23,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   messageContainer: {
+    maxWidth: "90%",
     marginVertical: 12,
     padding: 12,
     borderTopLeftRadius: 8,

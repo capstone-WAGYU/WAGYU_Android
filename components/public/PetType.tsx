@@ -21,7 +21,7 @@ interface Props {
 const PetTypeModal = ({ value, onChange }: Props) => {
   const [visible, setVisible] = useState(false);
   const [keyword, setKeyword] = useState("");
-  const [tempValue, setTempValue] = useState(value);
+  const [tempValue, setTempValue] = useState(value || "");
 
   const filteredList = useMemo(() => {
     return breedList.filter((breed) => breed.includes(keyword));
@@ -50,7 +50,7 @@ const PetTypeModal = ({ value, onChange }: Props) => {
               <Image
                 source={require("../../assets/images/findPetType.png")}
                 style={styles.icon}
-              ></Image>
+              />
               <Text style={styles.title}>반려견종 입력</Text>
             </View>
 
@@ -101,13 +101,11 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     paddingHorizontal: 10,
   },
-
   placeholder: {
     color: colors.GRAY2,
     fontWeight: "bold",
   },
   text: {},
-
   overlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.4)",
