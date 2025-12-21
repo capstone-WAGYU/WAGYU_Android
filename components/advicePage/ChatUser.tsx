@@ -1,6 +1,7 @@
 import { colors } from "@/constants";
 import React from "react";
 import { PressableProps, StyleSheet, Text, View } from "react-native";
+
 interface ChatUserProps extends PressableProps {
   message: string;
   variant?: "filled";
@@ -10,7 +11,7 @@ function ChatUser({ message, variant = "filled", ...props }: ChatUserProps) {
   return (
     <View style={styles.container}>
       <View style={styles.messageContainer}>
-        <Text>{message}</Text>
+        <Text style={styles.messageText}>{message}</Text>
       </View>
     </View>
   );
@@ -30,6 +31,9 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 8,
     borderBottomRightRadius: 8,
     backgroundColor: colors.BLUE0,
+  },
+  messageText: {
+    flexShrink: 1,
   },
 });
 

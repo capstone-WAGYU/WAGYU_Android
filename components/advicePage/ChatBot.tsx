@@ -1,6 +1,7 @@
 import { colors } from "@/constants";
 import React from "react";
 import { Image, PressableProps, StyleSheet, Text, View } from "react-native";
+
 interface ChatBotProps extends PressableProps {
   message: string;
   variant?: "filled";
@@ -13,8 +14,9 @@ function ChatBot({ message, variant = "filled", ...props }: ChatBotProps) {
         <View style={styles.chatBotProfile}>
           <Image source={require("../../assets/images/botProfile.png")} />
         </View>
+
         <View style={styles.messageContainer}>
-          <Text>{message}</Text>
+          <Text style={styles.messageText}>{message}</Text>
         </View>
       </View>
     </View>
@@ -30,8 +32,14 @@ const styles = StyleSheet.create({
   containerChild: {
     gap: 14,
   },
+  chatBotProfile: {
+    width: 10,
+    height: 10,
+    borderRadius: 100,
+  },
   messageContainer: {
     maxWidth: "90%",
+    minWidth: 110,
     marginVertical: 12,
     padding: 12,
     borderTopRightRadius: 8,
@@ -39,10 +47,8 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 8,
     backgroundColor: colors.BLUE0,
   },
-  chatBotProfile: {
-    width: 10,
-    height: 10,
-    borderRadius: "100%",
+  messageText: {
+    flexShrink: 1,
   },
 });
 

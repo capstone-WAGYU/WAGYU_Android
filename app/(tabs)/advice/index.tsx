@@ -2,7 +2,6 @@ import ChatBot from "@/components/advicePage/ChatBot";
 import ChatUser from "@/components/advicePage/ChatUser";
 import Header from "@/components/advicePage/Header";
 import MessageInput from "@/components/advicePage/MessageInput";
-import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import {
   Keyboard,
@@ -27,60 +26,95 @@ export default function AdviceScreen() {
   const baseUrl = process.env.EXPO_PUBLIC_CHATBOT_API_URL;
 
   useEffect(() => {
-    const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
+    const show = Keyboard.addListener("keyboardDidShow", () => {
       scrollRef.current?.scrollToEnd({ animated: true });
     });
-    const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
+    const hide = Keyboard.addListener("keyboardDidHide", () => {
       scrollRef.current?.scrollToEnd({ animated: true });
     });
 
     return () => {
-      showSubscription.remove();
-      hideSubscription.remove();
+      show.remove();
+      hide.remove();
     };
   }, []);
+
+  const typeText = async (fullText: string, botIndex: number) => {
+    for (let i = 0; i < fullText.length; i++) {
+      await new Promise((resolve) => setTimeout(resolve, 25));
+
+      setMessages((prev) => {
+        const updated = [...prev];
+        updated[botIndex] = {
+          ...updated[botIndex],
+          text: updated[botIndex].text + fullText[i],
+        };
+        return updated;
+      });
+    }
+  };
+
+  const loadingMessages = [
+    "생각 하는 중..",
+    "진단 결정 중..",
+    "질문 읽는 중..",
+  ];
+
+  const [loadingText, setLoadingText] = useState("");
 
   const sendMessage = async () => {
     if (!text.trim() || loading) return;
 
     const userText = text;
-    setMessages((prev) => [...prev, { sender: "user", text: userText }]);
     setText("");
     setLoading(true);
 
+    setLoadingText(
+      loadingMessages[Math.floor(Math.random() * loadingMessages.length)]
+    );
+
+    setMessages((prev) => [...prev, { sender: "user", text: userText }]);
+
+    let botIndex = 0;
+    setMessages((prev) => {
+      botIndex = prev.length;
+      return [...prev, { sender: "bot", text: "" }];
+    });
+
     try {
-      const response = await axios.post(
-        `${baseUrl}/ai/ask`,
-        {
-          userid: "1",
-          species: "",
-          name: "",
-          age: 1,
-          disease: [""],
-          text: userText,
+      const res = await fetch(`${baseUrl}/ai/ask`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        { timeout: 30000 }
-      );
+        body: JSON.stringify({
+          userid: "1",
+          species: "string",
+          name: "string",
+          age: 0,
+          disease: ["string"],
+          text: userText,
+        }),
+      });
 
-      const botAnswer =
-        typeof response.data === "string"
-          ? response.data
-          : response.data?.answer || "답변을 불러오지 못했어요.";
+      if (!res.ok) {
+        throw new Error("Server error");
+      }
 
-      setMessages((prev) => [...prev, { sender: "bot", text: botAnswer }]);
-    } catch (error: any) {
-      setMessages((prev) => [
-        ...prev,
-        {
+      const fullText = await res.text();
+
+      await typeText(fullText, botIndex);
+    } catch (err) {
+      console.log("ERROR:", err);
+
+      setMessages((prev) => {
+        const updated = [...prev];
+        updated[botIndex] = {
           sender: "bot",
           text: "서버 오류가 발생했어요. 잠시 후 다시 시도해주세요.",
-        },
-      ]);
-
-      console.log("ERROR MESSAGE:", error.message);
-      console.log("STATUS:", error.response?.status);
-      console.log("DATA:", error.response?.data);
-      console.log("FULL ERROR:", error);
+        };
+        return updated;
+      });
     } finally {
       setLoading(false);
     }
@@ -88,7 +122,7 @@ export default function AdviceScreen() {
 
   useEffect(() => {
     scrollRef.current?.scrollToEnd({ animated: true });
-  }, [messages, loading]);
+  }, [messages]);
 
   return (
     <KeyboardAvoidingView
@@ -97,26 +131,26 @@ export default function AdviceScreen() {
       keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0}
     >
       <View style={styles.chatContainer}>
-        <Header label={"독터봇"} />
+        <Header label="독터봇" />
 
         <ScrollView
-          showsVerticalScrollIndicator={false}
           ref={scrollRef}
+          showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 20 }}
-          onContentSizeChange={() =>
-            scrollRef.current?.scrollToEnd({ animated: true })
-          }
         >
-          <ChatBot message={"저에게 개의 질환에 관한 무엇이든 물어보세요!"} />
+          <ChatBot message="저는 개 수의 상담봇 닥터독입니다. 개의 질환에 관련한 무엇이든 물어보세요!" />
 
-          {messages.map((msg, index) =>
-            msg.sender === "user" ? (
-              <ChatUser key={index} message={msg.text} />
-            ) : (
-              <ChatBot key={index} message={msg.text} />
-            )
-          )}
-          {loading && <ChatBot key="loading" message="입력 중..." />}
+          {messages.map((msg, index) => {
+            if (msg.sender === "user") {
+              return <ChatUser key={index} message={msg.text} />;
+            }
+
+            if (msg.sender === "bot" && msg.text === "" && loading) {
+              return <ChatBot key={index} message={loadingText} />;
+            }
+
+            return <ChatBot key={index} message={msg.text} />;
+          })}
         </ScrollView>
       </View>
 
@@ -141,6 +175,5 @@ const styles = StyleSheet.create({
   chatContainer: {
     flex: 1,
     paddingHorizontal: 15,
-    justifyContent: "flex-start",
   },
 });
