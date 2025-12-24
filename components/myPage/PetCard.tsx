@@ -1,5 +1,5 @@
+// components/PetCard.tsx
 import { colors } from "@/constants";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
 import React from "react";
 import {
@@ -12,21 +12,27 @@ import {
 } from "react-native";
 
 interface PetCardProps extends PressableProps {
-  name: any;
-  breed: any;
+  petId: number;
+  name: string;
+  breed: string;
   date: string;
   size?: "medium" | "large";
 }
 
 function PetCard({
+  petId,
   name,
   breed,
   date,
   size = "large",
   ...props
 }: PetCardProps) {
+  // 클릭 시 petProfile 페이지로 이동
   const petProfileHandler = () => {
-    router.push("/petProfile");
+    router.push({
+      pathname: "/petProfile",
+      params: { petId: petId.toString() },
+    });
   };
 
   return (
@@ -36,8 +42,9 @@ function PetCard({
       onPress={petProfileHandler}
     >
       <View style={styles.container}>
-        <View style={styles.InforContainer}>
+        <View style={styles.infoContainer}>
           <View style={styles.imgContainer}>
+            {/* 프론트에서 적용되는 척만 */}
             <Image source={require("../../assets/images/dog_profile.png")} />
           </View>
           <View style={styles.textContainer}>
@@ -46,12 +53,7 @@ function PetCard({
             <Text style={styles.breedDate}>등록일: {date}</Text>
           </View>
         </View>
-        <MaterialIcons
-          name="arrow-forward-ios"
-          size={14}
-          color={colors.GRAY3}
-          style={styles.icon}
-        />
+        <Text style={styles.arrow}>➔</Text>
       </View>
     </Pressable>
   );
@@ -70,7 +72,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     height: 110,
   },
-  InforContainer: {
+  infoContainer: {
     alignItems: "center",
     flexDirection: "row",
   },
@@ -93,10 +95,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.GRAY2,
   },
-  icon: {
+  arrow: {
+    fontSize: 14,
+    color: colors.GRAY3,
     paddingHorizontal: 18,
   },
-
   pressed: {
     opacity: 0.8,
   },

@@ -30,7 +30,7 @@ function SettingContainer({ size = "large", ...props }: SettingContainerProps) {
         <Text style={styles.title}>설정</Text>
       </View>
 
-      <Setting onPress={handleAddress} label={"주소관리"} />
+      {/* <Setting onPress={handleAddress} label={"주소관리"} /> */}
       <Setting onPress={handleDelAccount} label={"탈퇴하기"} />
       <Setting onPress={handleLogout} label={"로그아웃"} />
     </View>

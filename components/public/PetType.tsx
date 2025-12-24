@@ -1,5 +1,6 @@
+// components/public/PetType.tsx
+import { Breed } from "@/api/petApi";
 import { colors } from "@/constants";
-import { breedList } from "@/constants/breedDiseaseMap";
 import Feather from "@expo/vector-icons/Feather";
 import React, { useMemo, useState } from "react";
 import {
@@ -14,21 +15,27 @@ import {
 } from "react-native";
 
 interface Props {
-  value: string;
-  onChange: (value: string) => void;
+  value: number | null;
+  onChange: (breedId: number) => void;
+  breeds: Breed[];
+  disabled?: boolean;
 }
 
-const PetTypeModal = ({ value, onChange }: Props) => {
+const PetType = ({ value, onChange, breeds, disabled = false }: Props) => {
   const [visible, setVisible] = useState(false);
   const [keyword, setKeyword] = useState("");
-  const [tempValue, setTempValue] = useState(value || "");
+  const [tempValue, setTempValue] = useState<number | null>(value);
+
+  const selectedBreed = breeds.find((b) => b.id === value);
 
   const filteredList = useMemo(() => {
-    return breedList.filter((breed) => breed.includes(keyword));
-  }, [keyword]);
+    return breeds.filter((breed) => breed.name.includes(keyword));
+  }, [keyword, breeds]);
 
   const handleConfirm = () => {
-    onChange(tempValue);
+    if (tempValue !== null) {
+      onChange(tempValue);
+    }
     setVisible(false);
   };
 
@@ -36,10 +43,11 @@ const PetTypeModal = ({ value, onChange }: Props) => {
     <>
       <TouchableOpacity
         style={styles.selectBox}
-        onPress={() => setVisible(true)}
+        onPress={() => !disabled && setVisible(true)}
+        disabled={disabled}
       >
-        <Text style={value ? styles.text : styles.placeholder}>
-          {value || "반려견종 입력"}
+        <Text style={selectedBreed ? styles.text : styles.placeholder}>
+          {selectedBreed ? selectedBreed.name : "반려견종 입력"}
         </Text>
       </TouchableOpacity>
 
@@ -63,14 +71,14 @@ const PetTypeModal = ({ value, onChange }: Props) => {
 
             <FlatList
               data={filteredList}
-              keyExtractor={(item) => item}
+              keyExtractor={(item) => item.id.toString()}
               renderItem={({ item }) => (
                 <TouchableOpacity
                   style={styles.item}
-                  onPress={() => setTempValue(item)}
+                  onPress={() => setTempValue(item.id)}
                 >
-                  <Text style={styles.itemText}>{item}</Text>
-                  {tempValue === item && (
+                  <Text style={styles.itemText}>{item.name}</Text>
+                  {tempValue === item.id && (
                     <Feather name="check" size={20} color="black" />
                   )}
                 </TouchableOpacity>
@@ -168,4 +176,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PetTypeModal;
+export default PetType;

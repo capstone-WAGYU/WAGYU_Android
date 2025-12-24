@@ -2,6 +2,7 @@ import ChatBot from "@/components/advicePage/ChatBot";
 import ChatUser from "@/components/advicePage/ChatUser";
 import Header from "@/components/advicePage/Header";
 import MessageInput from "@/components/advicePage/MessageInput";
+import { usePetStore } from "@/store/petStore";
 import { useEffect, useRef, useState } from "react";
 import {
   Keyboard,
@@ -22,6 +23,7 @@ export default function AdviceScreen() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef<ScrollView>(null);
+  const { pets } = usePetStore();
 
   const baseUrl = process.env.EXPO_PUBLIC_CHATBOT_API_URL;
 
@@ -82,31 +84,36 @@ export default function AdviceScreen() {
     });
 
     try {
+      // 2마리까지 데이터 합치기
+      const petInfoText = pets
+        .slice(0, 2)
+        .map((pet, idx) => {
+          const diseases = pet.diseases.map((d) => d.name).join(", ") || "없음";
+          return `반려견 ${idx + 1}: 이름 ${pet.name}, 나이 ${pet.age}, 품종 ${pet.breed.name}, 질병 ${diseases}`;
+        })
+        .join(" / ");
+
       const res = await fetch(`${baseUrl}/ai/ask`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userid: "1",
-          species: "string",
-          name: "string",
-          age: 0,
-          disease: ["string"],
-          text: userText,
+          // userid: "1",
+          species: "강아지",
+          name: pets[0]?.name || "강아지",
+          age: pets[0]?.age || 0,
+          disease: pets[0]?.diseases.map((d) => d.name) || [],
+          text: `${petInfoText}\n사용자 질문: ${userText}`,
         }),
       });
 
-      if (!res.ok) {
-        throw new Error("Server error");
-      }
+      if (!res.ok) throw new Error("Server error");
 
       const fullText = await res.text();
-
       await typeText(fullText, botIndex);
     } catch (err) {
       console.log("ERROR:", err);
-
       setMessages((prev) => {
         const updated = [...prev];
         updated[botIndex] = {

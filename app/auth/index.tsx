@@ -1,31 +1,45 @@
-import SocialLoginButton from "@/components/authPage/SocialLoginButton";
+import LoginInput from "@/components/authPage/LoginInput";
+import NextButton from "@/components/authPage/NextButton";
 import { colors } from "@/constants";
-import * as Google from "expo-auth-session/providers/google";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 import { router } from "expo-router";
-import * as WebBrowser from "expo-web-browser";
-import { useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { useState } from "react";
+import { Alert, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-WebBrowser.maybeCompleteAuthSession();
-
 export default function Login() {
-  const [request, response, promptAsync] = Google.useAuthRequest({
-    clientId: process.env.EXPO_PUBLIC_GOOGLE_LOGIN_CLIENTID!,
-    scopes: ["openid", "profile", "email"],
-  });
+  const baseUrl = process.env.EXPO_PUBLIC_BACKEND_API_URL;
 
-  useEffect(() => {
-    if (response?.type === "success") {
-      const { accessToken, idToken } = response.authentication!;
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-      console.log("Google Login Success");
-      console.log("accessToken:", accessToken);
-      console.log("idToken:", idToken);
-
-      router.replace("/auth/petInfor");
+  const handleLogin = async () => {
+    if (!username || !password) {
+      Alert.alert("로그인 실패", "아이디와 비밀번호를 모두 입력해주세요.");
+      return;
     }
-  }, [response]);
+
+    try {
+      const response = await axios.post(`${baseUrl}/auth/login`, {
+        username,
+        password,
+      });
+
+      const accessToken = response.data.data?.accessToken;
+
+      if (!accessToken) {
+        throw new Error("토큰이 없습니다.");
+      }
+
+      await AsyncStorage.setItem("accessToken", accessToken);
+
+      router.push("/(tabs)");
+    } catch (error: any) {
+      console.log("로그인 실패:", error.response?.data || error.message);
+      Alert.alert("로그인 실패", "아이디 또는 비밀번호를 확인해주세요.");
+    }
+  };
 
   return (
     <SafeAreaView style={styles.background}>
@@ -36,36 +50,43 @@ export default function Login() {
         </View>
 
         <View style={styles.announcesContainer}>
-          <Text style={styles.announceText}>원하시는</Text>
-          <Text style={styles.loginAnnounceText}> 로그인 </Text>
-          <Text style={styles.announceText}>방법을 선택하세요</Text>
+          <Text style={styles.loginAnnounceText}>로그인</Text>
+          <Text style={styles.announceText}>
+            {" "}
+            후 나의 애완동물을 케어해보세요!
+          </Text>
         </View>
       </View>
 
       <View style={styles.buttonsContainer}>
-        <SocialLoginButton
-          label="Naver로 시작하기"
-          logo={require("../../assets/images/naver_logo.png")}
-          backgroundColor={colors.Naver}
-          onPress={() => router.push("/auth/petInfor")}
+        <LoginInput
+          label="사용자명을 입력하세요"
+          value={username}
+          onChangeText={setUsername}
+        />
+        <LoginInput
+          label="비밀번호를 입력하세요"
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
         />
 
-        <SocialLoginButton
-          label="Kakao로 시작하기"
-          logo={require("../../assets/images/kakao_logo.png")}
-          backgroundColor={colors.Kakao}
-          textColor={colors.Black}
-          onPress={() => router.push("/auth/petInfor")}
-        />
+        <View>
+          <View style={styles.loginInput}>
+            <NextButton label="로그인 하기" onPress={handleLogin} />
+          </View>
 
-        <SocialLoginButton
-          label="Google로 시작하기"
-          logo={require("../../assets/images/google_logo.png")}
-          backgroundColor={colors.WHITE}
-          textColor={colors.Black}
-          disabled={!request}
-          onPress={() => promptAsync()}
-        />
+          <View style={styles.registerInfo}>
+            <Text style={styles.registerText}>계정이 없으신가요? </Text>
+            <Text
+              style={styles.register}
+              onPress={() => router.push("/auth/register")}
+            >
+              회원가입{" "}
+            </Text>
+            <Text style={styles.registerText}>후 이용해주세요</Text>
+          </View>
+        </View>
       </View>
 
       <View style={styles.voidContainer} />
@@ -83,11 +104,11 @@ const styles = StyleSheet.create({
   textsContainer: {
     flex: 3,
     justifyContent: "flex-end",
-    paddingBottom: "20%",
+    paddingBottom: "12%",
     gap: 20,
   },
   buttonsContainer: {
-    flex: 2,
+    flex: 3,
     gap: 15,
   },
   voidContainer: {
@@ -109,5 +130,20 @@ const styles = StyleSheet.create({
   },
   announceText: {
     color: colors.GRAY2,
+  },
+  registerInfo: {
+    marginVertical: 4,
+    flexDirection: "row",
+    justifyContent: "center",
+  },
+  register: {
+    color: colors.MainColor,
+    fontSize: 13,
+  },
+  registerText: {
+    fontSize: 13,
+  },
+  loginInput: {
+    marginVertical: 12,
   },
 });

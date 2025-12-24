@@ -1,21 +1,34 @@
 import { colors } from "@/constants";
 import Feather from "@expo/vector-icons/Feather";
 import React from "react";
-import { PressableProps, StyleSheet, TextInput, View } from "react-native";
+import { Pressable, StyleSheet, TextInput, View } from "react-native";
 
-interface SearchBarButtonProps extends PressableProps {
-  label: string;
-  size?: "medium" | "large";
-  variant?: "filled";
+interface SearchBarProps {
+  value: string;
+  onChangeText: (text: string) => void;
+  onSearch: () => void;
+  placeholder: string;
 }
 
-function SearchBarButton({ label }: SearchBarButtonProps) {
+function SearchBar({
+  value,
+  onChangeText,
+  onSearch,
+  placeholder,
+}: SearchBarProps) {
   return (
     <View style={styles.container}>
-      <TextInput placeholder={label} style={styles.barContainer} />
-      <View style={styles.iconContainer}>
+      <TextInput
+        value={value}
+        onChangeText={onChangeText}
+        placeholder={placeholder}
+        style={styles.barContainer}
+        returnKeyType="search"
+        onSubmitEditing={onSearch}
+      />
+      <Pressable style={styles.iconContainer} onPress={onSearch}>
         <Feather name="search" size={24} color="black" />
-      </View>
+      </Pressable>
     </View>
   );
 }
@@ -34,10 +47,12 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomRightRadius: 10,
     borderTopRightRadius: 10,
+    justifyContent: "center",
   },
   container: {
     flexDirection: "row",
+    marginBottom: 10,
   },
 });
 
-export default SearchBarButton;
+export default SearchBar;

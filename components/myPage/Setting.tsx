@@ -28,7 +28,7 @@ function Setting({ size = "large", label, ...props }: SettingProps) {
 const styles = StyleSheet.create({
   container: {},
   labelContainer: {
-    padding: 16,
+    padding: 20,
     borderTopColor: colors.GRAY9,
     borderTopWidth: 1,
   },

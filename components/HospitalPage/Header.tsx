@@ -9,6 +9,7 @@ import {
   Text,
   View,
 } from "react-native";
+
 interface HeaderProps extends PressableProps {
   label: string;
   variant?: "filled";
@@ -16,55 +17,59 @@ interface HeaderProps extends PressableProps {
 
 function Header({ label, variant = "filled", ...props }: HeaderProps) {
   const goBack = () => {
-    router.back();
+    if (router.canGoBack()) {
+      router.back();
+    }
   };
 
   return (
-    <View>
-      <View style={styles.container}>
-        <Pressable
-          style={({ pressed }) => [styles.icon, pressed && styles.pressed]}
-          {...props}
-          onPress={goBack}
-        >
-          <MaterialIcons name="arrow-back" size={24} color="black" />
-        </Pressable>
+    <View style={styles.container}>
+      <Pressable
+        {...props}
+        style={({ pressed }) => [styles.icon, pressed && styles.pressed]}
+        onPress={goBack}
+      >
+        <MaterialIcons name="arrow-back" size={24} color="black" />
+      </Pressable>
 
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>{label}</Text>
-        </View>
-        <View style={styles.emtiy} />
+      <View style={styles.titleContainer}>
+        <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
+          {label}
+        </Text>
       </View>
+
+      <View style={styles.rightSpacer} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    paddingBottom: 12,
     flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 15,
+    paddingBottom: 14,
     borderBottomWidth: 1,
     borderColor: colors.GRAY6,
-    paddingHorizontal: 15,
+  },
+  icon: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  pressed: {
+    opacity: 0.3,
   },
   titleContainer: {
-    alignItems: "flex-start",
-    paddingLeft: 12,
     flex: 1,
+    paddingLeft: 12,
+    justifyContent: "center",
   },
   title: {
     fontSize: 18,
     fontWeight: "500",
   },
-  emtiy: {
-    flex: 1,
-  },
-  icon: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-  },
-  pressed: {
-    opacity: 0.3,
+  rightSpacer: {
+    width: 24, // 오른쪽 여백 고정
   },
 });
 

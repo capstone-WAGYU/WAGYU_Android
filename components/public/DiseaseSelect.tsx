@@ -1,3 +1,5 @@
+// components/public/DiseaseSelect.tsx
+import { Disease } from "@/api/petApi";
 import { colors } from "@/constants";
 import Checkbox from "expo-checkbox";
 import React, { useState } from "react";
@@ -14,9 +16,9 @@ interface DiseaseSelectProps {
   label?: string;
   size?: "medium" | "large";
   variant?: "filled";
-  value: string[];
-  options: string[];
-  onChange: (value: string[]) => void;
+  value: number[];
+  options: Disease[];
+  onChange: (value: number[]) => void;
   style?: any;
 }
 
@@ -30,12 +32,22 @@ const DiseaseSelect = ({
 }: DiseaseSelectProps) => {
   const [isFocused, setIsFocused] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [tempValue, setTempValue] = useState<string[]>(value);
+  const [tempValue, setTempValue] = useState<number[]>(value);
 
-  const toggleItem = (item: string) => {
+  const toggleItem = (diseaseId: number) => {
     setTempValue((prev) =>
-      prev.includes(item) ? prev.filter((v) => v !== item) : [...prev, item]
+      prev.includes(diseaseId)
+        ? prev.filter((v) => v !== diseaseId)
+        : [...prev, diseaseId]
     );
+  };
+
+  const getDisplayText = () => {
+    if (value.length === 0) return "유전병 선택";
+    const selectedNames = options
+      .filter((d) => value.includes(d.id))
+      .map((d) => d.name);
+    return selectedNames.join(", ");
   };
 
   return (
@@ -54,9 +66,7 @@ const DiseaseSelect = ({
           styles[variant],
         ]}
       >
-        <Text style={styles.input}>
-          {value.length ? value.join(", ") : "유전병 선택"}
-        </Text>
+        <Text style={styles.input}>{getDisplayText()}</Text>
       </TouchableOpacity>
 
       <Modal transparent animationType="fade" visible={visible}>
@@ -73,19 +83,19 @@ const DiseaseSelect = ({
             ) : (
               <FlatList
                 data={options}
-                keyExtractor={(item) => item}
+                keyExtractor={(item) => item.id.toString()}
                 renderItem={({ item }) => {
-                  const checked = tempValue.includes(item);
+                  const checked = tempValue.includes(item.id);
 
                   return (
                     <TouchableOpacity
                       style={styles.item}
-                      onPress={() => toggleItem(item)}
+                      onPress={() => toggleItem(item.id)}
                     >
-                      <Text>{item}</Text>
+                      <Text>{item.name}</Text>
                       <Checkbox
                         value={checked}
-                        onValueChange={() => toggleItem(item)}
+                        onValueChange={() => toggleItem(item.id)}
                       />
                     </TouchableOpacity>
                   );

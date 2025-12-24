@@ -11,7 +11,7 @@ export default function PhoneCard({ phone, onPress }: PhoneCardProps) {
     <TouchableOpacity style={styles.contactCard} onPress={onPress}>
       <View>
         <Text style={styles.contactLabel}>내 연락처</Text>
-        <Text style={styles.contactNumber}>010-1234-5678</Text>
+        <Text style={styles.contactNumber}>{phone}</Text>
       </View>
       <Ionicons name="chevron-forward" size={20} color="#ccc" />
     </TouchableOpacity>

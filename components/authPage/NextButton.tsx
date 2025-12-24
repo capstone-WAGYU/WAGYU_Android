@@ -11,21 +11,32 @@ interface NextButtonProps extends PressableProps {
 function NextButton({
   label,
   size = "large",
-  variant = "filled", // 기본 값 지정
-  ...props // 상속 받은 pressable의 이벤트, 스타일 등 추가 props 전달 가능
+  variant = "filled",
+  disabled,
+  ...props
 }: NextButtonProps) {
   return (
     <Pressable
+      disabled={disabled}
       style={({ pressed }) => [
-        // pressed 상태(누르고 있는 상태일때) 감지
-        styles.container, // 공통 스타일
-        styles[size], // 크기 스타일
-        styles[variant], // filled 등 변형 스타일
-        pressed && styles.pressed, // 눌린 상태에서 스타일 적용
+        styles.container,
+        styles[size],
+        styles[variant],
+
+        disabled && styles.disabled,
+
+        pressed && !disabled && styles.pressed,
       ]}
       {...props}
     >
-      <Text style={styles.text}>{label}</Text>
+      <Text
+        style={[
+          styles.text,
+          disabled && styles.disabledText, // (선택) 텍스트 흐리게
+        ]}
+      >
+        {label}
+      </Text>
     </Pressable>
   );
 }
@@ -41,15 +52,25 @@ const styles = StyleSheet.create({
     height: 45,
   },
   medium: {},
+
   filled: {
     backgroundColor: colors.MainColor,
-    fontSize: 14,
-    fontWeight: "bold",
   },
+
+  // ✅ 비활성화 스타일
+  disabled: {
+    backgroundColor: colors.GRAY5,
+  },
+
   text: {
     color: colors.WHITE,
     fontWeight: "bold",
   },
+
+  disabledText: {
+    color: colors.GRAY3,
+  },
+
   pressed: {
     opacity: 0.8,
   },

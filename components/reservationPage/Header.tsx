@@ -1,4 +1,5 @@
 import EvilIcons from "@expo/vector-icons/EvilIcons";
+import { router } from "expo-router";
 import React from "react";
 import {
   Pressable,
@@ -22,6 +23,7 @@ function Header({ label, variant = "filled", ...props }: HeaderProps) {
       <Pressable
         style={({ pressed }) => [styles.icon, pressed && styles.pressed]}
         {...props}
+        onPress={() => router.push("/address")}
       >
         <Text>내위치</Text>
         <EvilIcons name="location" size={24} color="black" />

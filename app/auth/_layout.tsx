@@ -20,6 +20,13 @@ export default function AuthLayout() {
         }}
       />
       <Stack.Screen
+        name="register"
+        options={{
+          title: "회원가입",
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
         name="petInfor"
         options={{
           title: "동물정보",

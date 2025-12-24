@@ -2,19 +2,19 @@ import { colors } from "@/constants";
 import React, { useState } from "react";
 import { StyleSheet, TextInput, TextInputProps, View } from "react-native";
 
-interface PetInforInputProps extends TextInputProps {
+interface LoginInputProps extends TextInputProps {
   label?: string;
   size?: "medium" | "large";
   variant?: "filled";
 }
 
-const PetInforInput = ({
+const LoginInput = ({
   label,
   size = "large",
   variant = "filled",
   style,
   ...props
-}: PetInforInputProps) => {
+}: LoginInputProps) => {
   const [isFocused, setIsFocused] = useState(false);
 
   return (
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 6,
     width: "100%",
-    marginVertical: 20,
+    marginVertical: 3,
   },
   large: {
     height: 38,
@@ -54,6 +54,7 @@ const styles = StyleSheet.create({
   filled: {
     backgroundColor: colors.WHITE,
     borderBottomWidth: 1,
+    height: 50,
   },
   input: {
     fontSize: 14,
@@ -61,4 +62,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PetInforInput;
+export default LoginInput;

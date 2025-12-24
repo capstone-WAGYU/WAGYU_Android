@@ -1,104 +1,71 @@
-import AnnouncePetInforText from "@/components/authPage/AnnouncePetInforText";
-import NextButton from "@/components/authPage/NextButton";
-import PetInforHeader from "@/components/authPage/PetInforHeader";
-import ImageUpload from "@/components/myPage/petProfilePage/ImageUpload";
-import AgeInput from "@/components/public/AgeInput";
-import DiseaseSelect from "@/components/public/DiseaseSelect";
-import PetInforInput from "@/components/public/PetInforInput";
-import PetSex from "@/components/public/PetSex";
-import PetType from "@/components/public/PetType";
-import { breedDiseaseMap } from "@/constants/breedDiseaseMap";
+import { colors } from "@/constants";
 import { usePetStore } from "@/store/petStore";
-import { router } from "expo-router";
-import React, { useState } from "react";
-import { Alert, StyleSheet, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import React, { useEffect } from "react";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import PetCard from "../../components/myPage/PetCard";
+import PetCardAdd from "../../components/myPage/PetCardAdd";
 
-export default function PetInfor() {
-  const [name, setName] = useState("");
-  const [breed, setBreed] = useState("");
-  const [age, setAge] = useState("");
-  const [gender, setGender] = useState("");
-  const [disease, setDisease] = useState<string[]>([]);
+function PetInfor() {
+  const pets = usePetStore((state) => state.pets);
+  const loading = usePetStore((state) => state.loading);
+  const fetchPets = usePetStore((state) => state.fetchPets);
 
-  const [diseaseOptions, setDiseaseOptions] = useState<string[]>([]);
+  useEffect(() => {
+    fetchPets();
+  }, [fetchPets]);
 
-  const addPet = usePetStore((state) => state.addPet);
-
-  const handleBreedChange = (value: string) => {
-    setBreed(value);
-
-    const diseases = breedDiseaseMap[value] ?? [];
-    setDiseaseOptions(diseases);
-
-    setDisease([]);
-  };
-
-  const isAllFilled = Boolean(name.trim() && breed && age);
-
-  const handleRouter = () => {
-    if (!isAllFilled) {
-      Alert.alert("알림", "반려동물 정보를 모두 입력해 주십시오.");
-      return;
-    }
-
-    addPet({
-      name: name.trim(),
-      breed,
-      age,
-      gender: gender || "미선택",
-      disease: disease.length ? disease.join(", ") : "없음",
-    });
-
-    router.push("/(tabs)");
-  };
+  if (loading && pets.length === 0) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>반려동물</Text>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.MainColor} />
+        </View>
+      </View>
+    );
+  }
 
   return (
-    <SafeAreaView style={styles.background}>
-      <PetInforHeader />
-      <AnnouncePetInforText Label={"반려동물 정보를 입력해주세요"} />
+    <View style={styles.container}>
+      <Text style={styles.title}>반려동물</Text>
 
-      <View style={styles.imgContainer}>
-        <ImageUpload />
-      </View>
+      {pets.slice(0, 2).map((pet) => (
+        <PetCard
+          key={pet.id}
+          petId={pet.id}
+          name={pet.name}
+          breed={pet.breed.name}
+          date={new Date()
+            .toLocaleDateString("ko-KR", {
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+            })
+            .replace(/\. /g, ".")
+            .replace(/\.$/, "")}
+        />
+      ))}
 
-      <PetInforInput label={"이름"} value={name} onChangeText={setName} />
-
-      <AgeInput label={"나이"} value={age} onChangeText={setAge} />
-
-      <PetType value={breed} onChange={handleBreedChange} />
-
-      <PetSex label={"성별"} value={gender} onChange={setGender} />
-
-      <DiseaseSelect
-        label="유전병"
-        value={disease}
-        onChange={setDisease}
-        options={diseaseOptions}
-      />
-
-      <View style={styles.voidContainer}>
-        <NextButton label={"입력 완료"} onPress={handleRouter} />
-      </View>
-    </SafeAreaView>
+      {pets.length < 2 && <PetCardAdd />}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    backgroundColor: "white",
+  container: {
+    paddingVertical: 10,
     paddingHorizontal: 15,
-    paddingVertical: 15,
+    flexDirection: "column",
   },
-  voidContainer: {
-    flex: 1,
+  title: {
+    fontSize: 14,
+    paddingVertical: 12,
+    fontWeight: "bold",
+  },
+  loadingContainer: {
+    paddingVertical: 40,
     alignItems: "center",
-    justifyContent: "flex-end",
-  },
-  imgContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    paddingVertical: 20,
   },
 });
+
+export default PetInfor;

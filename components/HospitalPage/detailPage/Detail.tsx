@@ -1,38 +1,127 @@
 import { colors } from "@/constants";
-import { StyleSheet, Text, View } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ServiceInfo from "./ServiceInfo";
 
-export default function Detail() {
-  const hospitalInfo = {
-    name: "최인규",
-    title: "24시에피소드동물메디컬센터",
-    road: "대구 동구 동대구로 425 B1 ~ 2층",
-    time: "오전 10:00 ~ 오후 06:00",
+interface DetailProps {
+  hospitalId: number;
+  baseUrl: string;
+}
+
+interface HospitalDetail {
+  name: string;
+  address: string;
+  openTime: string;
+  closeTime: string;
+  services?: string[]; // 편의시설 정보 (API에 있다면)
+}
+
+export default function Detail({ hospitalId, baseUrl }: DetailProps) {
+  const [hospital, setHospital] = useState<HospitalDetail | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchHospitalDetail = async () => {
+      try {
+        setLoading(true);
+        const token = await AsyncStorage.getItem("accessToken");
+        if (!token) return;
+
+        // 병원 기본 정보 가져오기
+        const hospitalRes = await axios.get(
+          `${baseUrl}/hospital/${hospitalId}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        // 오늘 날짜의 진료시간 가져오기
+        const today = new Date().toISOString().split("T")[0];
+        const scheduleRes = await axios.get(
+          `${baseUrl}/hospital/${hospitalId}/schedule`,
+          {
+            params: { date: today },
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        if (hospitalRes.data.success && scheduleRes.data.success) {
+          setHospital({
+            name: hospitalRes.data.data.name,
+            address: hospitalRes.data.data.address,
+            openTime: scheduleRes.data.data.openTime,
+            closeTime: scheduleRes.data.data.closeTime,
+            services: hospitalRes.data.data.services, // API에 있다면
+          });
+        }
+      } catch (error) {
+        console.error("병원 상세 정보 조회 실패:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHospitalDetail();
+  }, [hospitalId, baseUrl]);
+
+  // 시간 포맷팅 함수 (09:30:00 -> 오전 09:30)
+  const formatTime = (time: string) => {
+    const [hour, minute] = time.split(":");
+    const h = parseInt(hour);
+    const period = h < 12 ? "오전" : "오후";
+    const displayHour = h === 0 ? 12 : h > 12 ? h - 12 : h;
+    return `${period} ${displayHour.toString().padStart(2, "0")}:${minute}`;
   };
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.background}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.MainColor} />
+          <Text style={styles.loadingText}>정보를 불러오는 중...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (!hospital) {
+    return (
+      <SafeAreaView style={styles.background}>
+        <View style={styles.loadingContainer}>
+          <Text style={styles.errorText}>병원 정보를 불러올 수 없습니다</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.background}>
       <View style={styles.detailInfoContainer}>
-        <Text>병원장</Text>
-        <Text style={styles.content}>{hospitalInfo.name}</Text>
+        <Text style={styles.label}>병원명</Text>
+        <Text style={styles.content}>{hospital.name}</Text>
       </View>
+
       <View style={styles.detailInfoContainer}>
-        <Text>병원명</Text>
-        <Text style={styles.content}>{hospitalInfo.title}</Text>
+        <Text style={styles.label}>오시는 길</Text>
+        <Text style={styles.content}>{hospital.address}</Text>
       </View>
+
       <View style={styles.detailInfoContainer}>
-        <Text>오시는 길</Text>
-        <Text style={styles.content}>{hospitalInfo.road}</Text>
+        <Text style={styles.label}>진료시간</Text>
+        <Text style={styles.content}>
+          {formatTime(hospital.openTime)} ~ {formatTime(hospital.closeTime)}
+        </Text>
       </View>
-      <View style={styles.detailInfoContainer}>
-        <Text>진료시간</Text>
-        <Text style={styles.content}>{hospitalInfo.title}</Text>
-      </View>
+
       <View style={styles.grayStick} />
+
       <View style={styles.detailInfoContainer}>
-        <Text>편의시설 및 서비스</Text>
+        <Text style={styles.label}>편의시설 및 서비스</Text>
       </View>
+
       <View style={styles.serviceContainer}>
         <ServiceInfo
           label="주차"
@@ -62,13 +151,26 @@ export default function Detail() {
 const styles = StyleSheet.create({
   background: {
     marginHorizontal: 20,
-    marginVertical: -22, // expo 억지 ui
+    marginVertical: -22,
     flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 10,
+  },
+  loadingText: {
+    fontSize: 14,
+    color: colors.GRAY0,
+  },
+  errorText: {
+    fontSize: 14,
+    color: colors.GRAY0,
   },
   grayStick: {
     height: 2,
     marginVertical: 12,
-
     backgroundColor: colors.GRAY6,
   },
   detailInfoContainer: {
@@ -76,13 +178,20 @@ const styles = StyleSheet.create({
     gap: 8,
     flex: 1,
   },
+  label: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#000",
+  },
   content: {
+    fontSize: 14,
     color: colors.GRAY0,
+    lineHeight: 20,
   },
   serviceContainer: {
     flexDirection: "row",
-    flexWrap: "wrap", // ← 가로 공간 부족하면 자동 줄바꿈
-    gap: 18, // 아이템 간 간격
+    flexWrap: "wrap",
+    gap: 18,
     paddingHorizontal: 10,
   },
 });
