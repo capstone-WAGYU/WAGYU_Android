@@ -1,6 +1,7 @@
 import { AuthProvider, useAuth } from "@/context/useAuth";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
+import { ActivityIndicator, View } from "react-native";
 import "react-native-reanimated";
 
 export default function RootLayout() {
@@ -8,7 +9,13 @@ export default function RootLayout() {
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
 
-  if (!loaded) return null;
+  if (!loaded) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   return (
     <AuthProvider>
@@ -18,10 +25,14 @@ export default function RootLayout() {
 }
 
 const RootNavigator = () => {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, isLoading } = useAuth();
 
-  if (isLoggedIn === undefined) {
-    return null;
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
   }
 
   return (

@@ -12,9 +12,9 @@ import {
 
 interface SocialLoginButtonProps extends PressableProps {
   label: string;
-  logo: ImageSourcePropType; // 이미지 경로
-  backgroundColor: string; // 배경색
-  textColor?: string; // 글자 색상 (선택)
+  logo: ImageSourcePropType;
+  backgroundColor: string;
+  textColor?: string;
   size?: "medium" | "large";
 }
 
@@ -26,7 +26,6 @@ function SocialLoginButton({
   size = "large",
   ...props
 }: SocialLoginButtonProps) {
-  // 글자 색상 결정: props로 전달된 경우 우선, 아니면 배경색이 WHITE면 검정, 아니면 흰색
   const finalTextColor =
     textColor ??
     (backgroundColor === colors.WHITE ? colors.WHITE : colors.WHITE);

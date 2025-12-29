@@ -73,13 +73,11 @@ export default function Reservation({
   } | null>(null);
   const [loading, setLoading] = useState(false);
 
-  /* 📌 날짜 변경 시 상태 초기화 */
   useEffect(() => {
     setSchedule(null);
     setSelectedTime(null);
   }, [selectedDate]);
 
-  /* 📌 날짜별 진료 스케줄 조회 */
   useEffect(() => {
     const fetchSchedule = async () => {
       try {
@@ -117,7 +115,6 @@ export default function Reservation({
     fetchSchedule();
   }, [selectedDate, hospitalId]);
 
-  /* ⏰ 시간 슬롯 계산 */
   const timeSlots = useMemo(() => {
     if (!schedule || schedule.isClosed) return [];
 

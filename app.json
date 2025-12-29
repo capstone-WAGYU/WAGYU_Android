@@ -4,27 +4,33 @@
     "slug": "dogtor",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/splashImgTest.png",
+    "icon": "./assets/images/app_img.png",
     "scheme": "dogtor",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+
     "ios": {
       "supportsTablet": true
     },
+
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/app_img.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
       "package": "com.swsj.dogtor"
     },
-    "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
-    },
+
     "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ],
       "expo-router",
       [
         "expo-splash-screen",
@@ -37,15 +43,18 @@
       ],
       "expo-web-browser"
     ],
+
     "experiments": {
       "typedRoutes": true
     },
+
     "extra": {
       "router": {},
       "eas": {
         "projectId": "80bed6b6-e107-42a4-b860-422ae30892a1"
       }
     },
+
     "owner": "swsj"
   }
 }

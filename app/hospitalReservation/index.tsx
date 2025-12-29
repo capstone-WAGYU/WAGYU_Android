@@ -21,7 +21,6 @@ export default function HospitalReservation() {
     "reservation" | "detail" | "review"
   >("reservation");
 
-  // ✅ 휴무 여부 (Reservation에서 내려줌)
   const [isClosed, setIsClosed] = useState(false);
 
   const params = useLocalSearchParams();

@@ -15,8 +15,8 @@ function ReservateCheckCard({
   time,
   location,
   size = "large",
-  variant = "filled", // 기본 값 지정
-  ...props // 상속 받은 pressable의 이벤트, 스타일 등 추가 props 전달 가능
+  variant = "filled",
+  ...props
 }: ReservateCheckCardProps) {
   return (
     <View style={styles.container}>

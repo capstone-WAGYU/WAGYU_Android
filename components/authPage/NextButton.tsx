@@ -29,12 +29,7 @@ function NextButton({
       ]}
       {...props}
     >
-      <Text
-        style={[
-          styles.text,
-          disabled && styles.disabledText, // (선택) 텍스트 흐리게
-        ]}
-      >
+      <Text style={[styles.text, disabled && styles.disabledText]}>
         {label}
       </Text>
     </Pressable>
@@ -57,7 +52,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.MainColor,
   },
 
-  // ✅ 비활성화 스타일
   disabled: {
     backgroundColor: colors.GRAY5,
   },

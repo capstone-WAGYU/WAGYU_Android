@@ -16,7 +16,7 @@ interface HospitalDetail {
   address: string;
   openTime: string;
   closeTime: string;
-  services?: string[]; // 편의시설 정보 (API에 있다면)
+  services?: string[];
 }
 
 export default function Detail({ hospitalId, baseUrl }: DetailProps) {
@@ -30,7 +30,6 @@ export default function Detail({ hospitalId, baseUrl }: DetailProps) {
         const token = await AsyncStorage.getItem("accessToken");
         if (!token) return;
 
-        // 병원 기본 정보 가져오기
         const hospitalRes = await axios.get(
           `${baseUrl}/hospital/${hospitalId}`,
           {
@@ -38,7 +37,6 @@ export default function Detail({ hospitalId, baseUrl }: DetailProps) {
           }
         );
 
-        // 오늘 날짜의 진료시간 가져오기
         const today = new Date().toISOString().split("T")[0];
         const scheduleRes = await axios.get(
           `${baseUrl}/hospital/${hospitalId}/schedule`,
@@ -54,7 +52,7 @@ export default function Detail({ hospitalId, baseUrl }: DetailProps) {
             address: hospitalRes.data.data.address,
             openTime: scheduleRes.data.data.openTime,
             closeTime: scheduleRes.data.data.closeTime,
-            services: hospitalRes.data.data.services, // API에 있다면
+            services: hospitalRes.data.data.services,
           });
         }
       } catch (error) {
@@ -67,7 +65,6 @@ export default function Detail({ hospitalId, baseUrl }: DetailProps) {
     fetchHospitalDetail();
   }, [hospitalId, baseUrl]);
 
-  // 시간 포맷팅 함수 (09:30:00 -> 오전 09:30)
   const formatTime = (time: string) => {
     const [hour, minute] = time.split(":");
     const h = parseInt(hour);

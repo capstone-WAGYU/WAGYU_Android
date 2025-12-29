@@ -12,8 +12,8 @@ import {
 interface HospitalCardProps extends PressableProps {
   title: string;
   location: string;
-  closed: boolean; // 백엔드 closed 값
-  openTime?: string; // 선택적으로 시간 표시 가능
+  closed: boolean;
+  openTime?: string;
   closeTime?: string;
   variant?: "filled";
 }
@@ -27,7 +27,6 @@ function HospitalCard({
   variant = "filled",
   ...props
 }: HospitalCardProps) {
-  // closed 상태에 따라 진료중 / 휴업중 표시
   const displayStatus = closed ? "휴업중" : "진료중";
 
   return (

@@ -1,7 +1,7 @@
 import LoginInput from "@/components/authPage/LoginInput";
 import NextButton from "@/components/authPage/NextButton";
 import { colors } from "@/constants";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useAuth } from "@/context/useAuth";
 import axios from "axios";
 import { router } from "expo-router";
 import { useState } from "react";
@@ -10,6 +10,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Login() {
   const baseUrl = process.env.EXPO_PUBLIC_BACKEND_API_URL;
+  const { login } = useAuth();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -21,10 +22,15 @@ export default function Login() {
     }
 
     try {
+      console.log("Login 요청 URL:", `${baseUrl}/auth/login`);
+      console.log("보내는 데이터:", { username, password });
+
       const response = await axios.post(`${baseUrl}/auth/login`, {
         username,
         password,
       });
+
+      console.log("응답:", response.data);
 
       const accessToken = response.data.data?.accessToken;
 
@@ -32,11 +38,15 @@ export default function Login() {
         throw new Error("토큰이 없습니다.");
       }
 
-      await AsyncStorage.setItem("accessToken", accessToken);
-
-      router.push("/(tabs)");
+      await login(accessToken);
+      router.replace("/(tabs)");
     } catch (error: any) {
-      console.log("로그인 실패:", error.response?.data || error.message);
+      if (axios.isAxiosError(error)) {
+        console.log("Axios Error Message:", error.message);
+        console.log("Axios Response Data:", error.response?.data);
+      } else {
+        console.log("Other Error:", error);
+      }
       Alert.alert("로그인 실패", "아이디 또는 비밀번호를 확인해주세요.");
     }
   };

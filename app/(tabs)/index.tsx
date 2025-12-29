@@ -2,12 +2,25 @@ import AddAnnounceButton from "@/components/mainPage/AddAnnounceButton";
 import ReservateCheckCard from "@/components/mainPage/ReservateCheckCard";
 import SmallCustomButton from "@/components/mainPage/SmallCustomButton";
 import { colors } from "@/constants";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
+import { useEffect } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
+  useEffect(() => {
+    const checkToken = async () => {
+      const token = await AsyncStorage.getItem("accessToken");
+
+      if (!token) {
+        router.replace("/auth");
+      }
+    };
+
+    checkToken();
+  }, []);
   return (
     <SafeAreaView style={styles.background}>
       <View style={styles.headerContainer}>

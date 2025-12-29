@@ -6,12 +6,10 @@ import PetCard from "./PetCard";
 import PetCardAdd from "./PetCardAdd";
 
 function PetInfor() {
-  // pets와 loading을 store에서 바로 구독
   const pets = usePetStore((state) => state.pets);
   const loading = usePetStore((state) => state.loading);
   const fetchPets = usePetStore((state) => state.fetchPets);
 
-  // 초기 로드
   useEffect(() => {
     fetchPets();
   }, []);

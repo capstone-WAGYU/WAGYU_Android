@@ -1,6 +1,4 @@
 import { colors } from "@/constants";
-import { useAuth } from "@/context/useAuth";
-import { router } from "expo-router";
 import React from "react";
 import { Pressable, PressableProps, StyleSheet, Text } from "react-native";
 
@@ -14,14 +12,9 @@ function AgreeButton({
   label,
   size = "large",
   variant = "filled",
+  onPress,
   ...props
 }: AgreeButtonProps) {
-  const { logout } = useAuth();
-
-  const handleLogout = () => {
-    logout();
-    router.replace("/auth");
-  };
   return (
     <Pressable
       style={({ pressed }) => [
@@ -30,8 +23,8 @@ function AgreeButton({
         styles[variant],
         pressed && styles.pressed,
       ]}
+      onPress={onPress} // ✅ 부모에서 내려준 onPress 실행
       {...props}
-      onPress={handleLogout}
     >
       <Text style={styles.text}>{label}</Text>
     </Pressable>
@@ -51,8 +44,6 @@ const styles = StyleSheet.create({
   medium: {},
   filled: {
     backgroundColor: colors.MainColor,
-    fontSize: 14,
-    fontWeight: "bold",
   },
   text: {
     color: colors.WHITE,

@@ -1,6 +1,5 @@
 import NextButton from "@/components/authPage/NextButton";
 import RegisterInput from "@/components/authPage/RegisterInput";
-import { colors } from "@/constants";
 import axios from "axios";
 import { router } from "expo-router";
 import { useState } from "react";
@@ -22,7 +21,21 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [passwordCheck, setPasswordCheck] = useState("");
 
+  const validatePassword = (password: string) => {
+    const regex =
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+    return regex.test(password);
+  };
+
   const handleRegister = async () => {
+    if (!validatePassword(password)) {
+      Alert.alert(
+        "비밀번호 형식 오류",
+        "비밀번호는 8자 이상이며 영문, 숫자, 특수문자를 포함해야 합니다."
+      );
+      return;
+    }
+
     if (password !== passwordCheck) {
       Alert.alert("비밀번호가 일치하지 않음", "다시 입력해 주세요");
       return;
@@ -63,24 +76,40 @@ export default function Register() {
             label="사용자명을 입력해주세요"
             value={username}
             onChangeText={setUsername}
+            autoCapitalize="none"
           />
+
           <RegisterInput
             header="닉네임"
             label="닉네임을 입력해주세요"
             value={nickname}
             onChangeText={setNickname}
           />
+
           <RegisterInput
             header="비밀번호"
             label="비밀번호를 입력해주세요"
             secureTextEntry
+            autoCapitalize="none"
+            autoCorrect={false}
+            textContentType="oneTimeCode"
             value={password}
             onChangeText={setPassword}
           />
+
+          {password.length > 0 && !validatePassword(password) && (
+            <Text style={styles.passwordWarning}>
+              비밀번호는 8자 이상, 영문/숫자/특수문자를 포함해야 합니다
+            </Text>
+          )}
+
           <RegisterInput
             header="비밀번호 확인"
             label="비밀번호를 다시 입력해주세요"
             secureTextEntry
+            autoCapitalize="none"
+            autoCorrect={false}
+            textContentType="oneTimeCode"
             value={passwordCheck}
             onChangeText={setPasswordCheck}
           />
@@ -108,7 +137,6 @@ const styles = StyleSheet.create({
     right: 15,
     marginBottom: 43,
   },
-
   textsContainer: {
     flex: 3,
     justifyContent: "flex-end",
@@ -119,36 +147,13 @@ const styles = StyleSheet.create({
     flex: 3,
     gap: 15,
   },
-  voidContainer: {
-    flex: 4.9,
-  },
   text: {
     fontSize: 20,
     fontWeight: "bold",
   },
-  announcesContainer: {
-    flexDirection: "row",
-  },
-  loginAnnounceText: {
-    color: colors.MainColor,
-  },
-  announceText: {
-    color: colors.GRAY2,
-  },
-  registerInfo: {
-    marginVertical: 4,
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-  register: {
-    color: colors.MainColor,
+  passwordWarning: {
     fontSize: 12,
-  },
-  registerText: {
-    fontSize: 12,
-  },
-  loginInput: {
-    flex: 1,
-    marginVertical: 12,
+    color: "red",
+    marginLeft: 4,
   },
 });

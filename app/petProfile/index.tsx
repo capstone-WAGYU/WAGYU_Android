@@ -1,4 +1,3 @@
-// app/petProfile.tsx
 import { petApi } from "@/api/petApi";
 import NextButton from "@/components/authPage/NextButton";
 import ImageUpload from "@/components/myPage/petProfilePage/ImageUpload";
@@ -29,7 +28,8 @@ export default function PetProfile() {
   const [name, setName] = useState("");
   const [breed, setBreed] = useState<number | null>(null);
   const [age, setAge] = useState("");
-  const [gender, setGender] = useState<"M" | "F" | "">("");
+  const [gender, setGender] = useState<"M" | "F">("M");
+
   const [disease, setDisease] = useState<number[]>([]);
 
   const {
@@ -50,10 +50,9 @@ export default function PetProfile() {
     }
   }, []);
 
-  // 전체 목록에서 petId 찾아서 상태 세팅
   const loadPetDataFromList = async (id: number) => {
     try {
-      const pets = await petApi.getPets(); // 전체 목록 조회
+      const pets = await petApi.getPets();
       const pet = pets.find((p) => p.id === id);
 
       if (!pet) {
@@ -166,21 +165,21 @@ export default function PetProfile() {
           label={"이름"}
           value={name}
           onChangeText={setName}
-          editable={true} // Edit 모드에서도 수정 가능
+          editable={true}
         />
 
         <AgeInput
           label={"나이"}
           value={age}
           onChangeText={setAge}
-          editable={true} // Edit 모드에서도 수정 가능
+          editable={true}
         />
 
         <PetType
           value={breed}
           onChange={handleBreedChange}
           breeds={breeds}
-          disabled={false} // Edit 모드에서도 변경 가능
+          disabled={false}
         />
 
         <PetSex

@@ -15,6 +15,8 @@ export default function MyScreen() {
   const [username, setUsername] = useState("");
   const [nickname, setNickname] = useState("");
 
+  console.log("backendUrl:", baseUrl);
+
   useEffect(() => {
     const fetchMyInfo = async () => {
       try {

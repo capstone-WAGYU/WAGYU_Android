@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     alignItems: "center",
+
     flex: 1,
   },
   title: {

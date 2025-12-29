@@ -1,4 +1,3 @@
-// components/PetCard.tsx
 import { colors } from "@/constants";
 import { router } from "expo-router";
 import React from "react";
@@ -17,6 +16,7 @@ interface PetCardProps extends PressableProps {
   breed: string;
   date: string;
   size?: "medium" | "large";
+  disableNavigation?: boolean;
 }
 
 function PetCard({
@@ -25,27 +25,40 @@ function PetCard({
   breed,
   date,
   size = "large",
+  disableNavigation = false,
+  onPress,
   ...props
 }: PetCardProps) {
-  // 클릭 시 petProfile 페이지로 이동
   const petProfileHandler = () => {
-    router.push({
-      pathname: "/petProfile",
-      params: { petId: petId.toString() },
-    });
+    if (!disableNavigation) {
+      router.push({
+        pathname: "/petProfile",
+        params: { petId: petId.toString() },
+      });
+    }
+  };
+
+  const handlePress = (event: any) => {
+    if (onPress) {
+      onPress(event);
+    } else {
+      petProfileHandler();
+    }
   };
 
   return (
     <Pressable
       style={({ pressed }) => pressed && styles.pressed}
       {...props}
-      onPress={petProfileHandler}
+      onPress={handlePress}
     >
       <View style={styles.container}>
         <View style={styles.infoContainer}>
           <View style={styles.imgContainer}>
-            {/* 프론트에서 적용되는 척만 */}
-            <Image source={require("../../assets/images/dog_profile.png")} />
+            <Image
+              style={{ width: 55, height: 55 }}
+              source={require("../../assets/images/dog_profile2.png")}
+            />
           </View>
           <View style={styles.textContainer}>
             <Text style={styles.nameText}>{name}</Text>

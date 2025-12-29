@@ -19,7 +19,6 @@ function SelectButton({
 
   return (
     <View style={styles.container}>
-      {/* 예약하기 */}
       <Pressable
         onPress={() => {
           setSelected("reservation");
@@ -74,7 +73,6 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.GRAY4,
     flexDirection: "row",
-    // padding: 4,
     marginHorizontal: 25,
     borderRadius: 12,
   },

@@ -3,11 +3,23 @@ import Header from "@/components/HospitalPage/Header";
 import PhoneCard from "@/components/HospitalPage/reservationPage/PhoneCard";
 import PhoneEdit from "@/components/HospitalPage/reservationPage/PhoneEdit";
 import PetCard from "@/components/myPage/PetCard";
+import { usePetStore } from "@/store/petStore";
+import { router } from "expo-router";
 import React, { useState } from "react";
-import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ReservationScreen() {
+  const { pets } = usePetStore();
+  const [selectedPetId, setSelectedPetId] = useState<number | null>(null);
+
   const [visitReason, setVisitReason] = useState("");
   const [request, setRequest] = useState("");
   const [phone, setPhone] = useState("010-1234-5678");
@@ -18,9 +30,39 @@ export default function ReservationScreen() {
       <Header label={"예약 하기"} />
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        <Text style={styles.sectionTitle}>추가정보</Text>
+        <Text style={styles.sectionTitle}>반려동물 선택</Text>
 
-        <PetCard name="최인규" breed="불독" date="2025.09.05" />
+        {pets.map((pet) => {
+          const isSelected = selectedPetId === pet.id;
+          const isDisabled = selectedPetId !== null && !isSelected;
+
+          return (
+            <View
+              key={pet.id}
+              style={[styles.petCardWrapper, isDisabled && styles.disabledCard]}
+            >
+              <PetCard
+                petId={pet.id}
+                name={pet.name}
+                breed={pet.breed.name}
+                date={new Date()
+                  .toLocaleDateString("ko-KR", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                  })
+                  .replace(/\. /g, ".")
+                  .replace(/\.$/, "")}
+                onPress={() => setSelectedPetId(pet.id)}
+                style={[styles.petCard, isSelected && styles.selectedPetCard]}
+              />
+            </View>
+          );
+        })}
+
+        {pets.length === 0 && (
+          <Text style={styles.emptyText}>등록된 반려동물이 없습니다.</Text>
+        )}
 
         <View style={styles.inputSection}>
           <Text style={styles.inputLabel}>
@@ -61,7 +103,18 @@ export default function ReservationScreen() {
             <Text style={styles.charCount}>{request.length}/30</Text>
           </View>
         </View>
-        <NextButton label={"예약 완료"} />
+
+        <NextButton
+          label={"예약 완료"}
+          disabled={!selectedPetId || !visitReason.trim()}
+          onPress={() => {
+            Alert.alert("예약 완료", "예약이 성공적으로 완료되었습니다.", [
+              { text: "확인" },
+            ]);
+            router.push("/(tabs)/reservation");
+            console.log("선택된 반려견 ID:", selectedPetId);
+          }}
+        />
       </ScrollView>
 
       <PhoneEdit
@@ -89,6 +142,21 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     color: "#333",
     paddingVertical: 18,
+  },
+  petCardWrapper: {
+    marginBottom: 10,
+  },
+  petCard: {
+    marginBottom: 0,
+  },
+  selectedPetCard: {},
+  disabledCard: {
+    opacity: 0.4,
+  },
+  emptyText: {
+    textAlign: "center",
+    color: "#999",
+    marginVertical: 20,
   },
   inputSection: {
     marginVertical: 20,
@@ -126,21 +194,5 @@ const styles = StyleSheet.create({
     backgroundColor: "#f5f5f5",
     marginHorizontal: -20,
     marginTop: 25,
-  },
-  bottomContainer: {
-    paddingHorizontal: 20,
-    paddingBottom: 22,
-    backgroundColor: "#fff",
-  },
-  reserveButton: {
-    backgroundColor: "#015DA9",
-    borderRadius: 8,
-    paddingVertical: 18,
-    alignItems: "center",
-  },
-  reserveButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
   },
 });

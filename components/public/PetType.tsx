@@ -1,4 +1,3 @@
-// components/public/PetType.tsx
 import { Breed } from "@/api/petApi";
 import { colors } from "@/constants";
 import Feather from "@expo/vector-icons/Feather";

@@ -1,4 +1,3 @@
-// components/public/DiseaseSelect.tsx
 import { Disease } from "@/api/petApi";
 import { colors } from "@/constants";
 import Checkbox from "expo-checkbox";

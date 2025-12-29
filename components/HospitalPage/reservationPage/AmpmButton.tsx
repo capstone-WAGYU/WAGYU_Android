@@ -24,7 +24,7 @@ function AmpmButton({
         styles.container,
         styles[size],
         styles[variant],
-        selected && styles.selected, // ★ 선택 상태일 때 스타일 고정
+        selected && styles.selected,
       ]}
     >
       <Text style={[styles.text, selected && styles.selectedText]}>

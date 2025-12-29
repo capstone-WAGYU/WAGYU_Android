@@ -20,9 +20,9 @@ function SettingContainer({ size = "large", ...props }: SettingContainerProps) {
     router.push("/delAccount");
   };
 
-  const handleAddress = () => {
-    router.push("/address");
-  };
+  // const handleAddress = () => {
+  //   router.push("/address");
+  // };
 
   return (
     <View style={styles.container}>
