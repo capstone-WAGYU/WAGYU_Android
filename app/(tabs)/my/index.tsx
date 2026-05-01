@@ -15,15 +15,12 @@ export default function MyScreen() {
   const [username, setUsername] = useState("");
   const [nickname, setNickname] = useState("");
 
-  console.log("backendUrl:", baseUrl);
-
   useEffect(() => {
     const fetchMyInfo = async () => {
       try {
         const token = await AsyncStorage.getItem("accessToken");
 
         if (!token) {
-          console.log("토큰 없음");
           return;
         }
 
@@ -38,11 +35,7 @@ export default function MyScreen() {
 
         setUsername(data.username);
         setNickname(data.nickname);
-      } catch (error: any) {
-        console.log(
-          "내 정보 조회 실패:",
-          error.response?.data || error.message
-        );
+      } catch {
       }
     };
 

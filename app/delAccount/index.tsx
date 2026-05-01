@@ -20,9 +20,8 @@ export default function DelAccount() {
 
       Alert.alert("탈퇴 완료", "그동안 이용해주셔서 감사합니다.");
       router.replace("/auth");
-    } catch (error) {
+    } catch {
       Alert.alert("오류", "회원 탈퇴에 실패했습니다.");
-      console.error(error);
     }
   };
 

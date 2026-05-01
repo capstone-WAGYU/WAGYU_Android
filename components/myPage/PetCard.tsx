@@ -1,4 +1,5 @@
 import { colors } from "@/constants";
+import { usePetStore } from "@/store/petStore";
 import { router } from "expo-router";
 import React from "react";
 import {
@@ -29,6 +30,8 @@ function PetCard({
   onPress,
   ...props
 }: PetCardProps) {
+  const petImages = usePetStore((state) => state.petImages);
+  const imageUri = petImages[petId];
   const petProfileHandler = () => {
     if (!disableNavigation) {
       router.push({
@@ -56,8 +59,12 @@ function PetCard({
         <View style={styles.infoContainer}>
           <View style={styles.imgContainer}>
             <Image
-              style={{ width: 55, height: 55 }}
-              source={require("../../assets/images/dog_profile2.png")}
+              style={{ width: 55, height: 55, borderRadius: 28 }}
+              source={
+                imageUri
+                  ? { uri: imageUri }
+                  : require("../../assets/images/dog_profile2.png")
+              }
             />
           </View>
           <View style={styles.textContainer}>

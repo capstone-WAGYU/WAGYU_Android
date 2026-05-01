@@ -1,21 +1,23 @@
 import { colors } from "@/constants";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import * as ImagePicker from "expo-image-picker";
-import React, { useState } from "react";
+import React from "react";
 import { Image, Pressable, StyleSheet, View } from "react-native";
 
 interface ImageUploadProps {
   size?: "medium" | "large";
   variant?: "filled";
+  value?: string | null;
+  onChange?: (uri: string) => void;
 }
 
 export default function ImageUpload({
   size = "large",
   variant = "filled",
+  value,
+  onChange,
   ...props
 }: ImageUploadProps) {
-  const [image, setImage] = useState<string | null>(null);
-
   const pickImage = async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
@@ -32,7 +34,7 @@ export default function ImageUpload({
     });
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      onChange?.(result.assets[0].uri);
     }
   };
 
@@ -47,8 +49,8 @@ export default function ImageUpload({
       onPress={pickImage}
       {...props}
     >
-      {image ? (
-        <Image source={{ uri: image }} style={styles.image} />
+      {value ? (
+        <Image source={{ uri: value }} style={styles.image} />
       ) : (
         <View style={styles.plus}>
           <AntDesign name="plus" size={30} color={colors.GRAY3} />

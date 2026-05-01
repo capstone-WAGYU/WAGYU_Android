@@ -54,8 +54,6 @@ export default function Register() {
       const status = error?.response?.status;
       const serverMessage = error?.response?.data?.message;
 
-      console.error("회원가입 에러:", status, serverMessage, error);
-
       if (status === 409) {
         Alert.alert("회원가입 실패", "이미 사용 중인 아이디입니다.");
       } else if (status === 400) {

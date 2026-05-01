@@ -106,8 +106,7 @@ export default function Reservation({
           setSchedule(closed);
           onClosedChange?.(true);
         }
-      } catch (e) {
-        console.error("❌ 진료시간 조회 실패", e);
+      } catch {
         const closed = { openTime: "", closeTime: "", isClosed: true };
         setSchedule(closed);
         onClosedChange?.(true);

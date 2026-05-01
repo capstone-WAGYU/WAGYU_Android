@@ -113,8 +113,7 @@ export default function AdviceScreen() {
       const json = await res.json();
       const fullText = json.text || "";
       await typeText(fullText, botIndex);
-    } catch (err) {
-      console.log("ERROR:", err);
+    } catch {
       setMessages((prev) => {
         const updated = [...prev];
         updated[botIndex] = {

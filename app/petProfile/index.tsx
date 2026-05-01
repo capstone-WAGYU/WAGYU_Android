@@ -36,11 +36,24 @@ export default function PetProfile() {
     breeds,
     diseases,
     loading,
+    petImages,
     fetchBreeds,
     fetchDiseasesByBreed,
     addPet,
     clearDiseases,
+    setPetImage,
   } = usePetStore();
+
+  const [imageUri, setImageUri] = useState<string | null>(
+    isEditMode && petId ? petImages[Number(petId)] ?? null : null
+  );
+
+  const handleImageChange = (uri: string) => {
+    setImageUri(uri);
+    if (isEditMode && petId) {
+      setPetImage(Number(petId), uri);
+    }
+  };
 
   useEffect(() => {
     fetchBreeds();
@@ -67,9 +80,8 @@ export default function PetProfile() {
       setDisease(pet.diseases.map((d) => d.id));
 
       await fetchDiseasesByBreed(pet.breed.id);
-    } catch (error) {
+    } catch {
       Alert.alert("오류", "반려동물 정보를 불러오는데 실패했습니다.");
-      console.error(error);
     }
   };
 
@@ -107,7 +119,9 @@ export default function PetProfile() {
           { text: "확인", onPress: () => router.replace("/(tabs)/my") },
         ]);
       } else {
-        // 등록 모드
+        // 등록 모드 — 추가 전 기존 pet ID 목록 스냅샷
+        const existingIds = new Set(usePetStore.getState().pets.map((p) => p.id));
+
         await addPet({
           name: name.trim(),
           age: parseInt(age),
@@ -115,6 +129,12 @@ export default function PetProfile() {
           gender: gender as "M" | "F",
           diseaseIds: disease,
         });
+
+        // 새로 생긴 pet을 찾아 이미지 연결
+        if (imageUri) {
+          const newPet = usePetStore.getState().pets.find((p) => !existingIds.has(p.id));
+          if (newPet) setPetImage(newPet.id, imageUri);
+        }
 
         Alert.alert("성공", "반려동물이 등록되었습니다.", [
           { text: "확인", onPress: () => router.back() },
@@ -158,7 +178,7 @@ export default function PetProfile() {
           </Text>
         </View>
         <View style={styles.imgContainer}>
-          <ImageUpload />
+          <ImageUpload value={imageUri} onChange={handleImageChange} />
         </View>
 
         <PetInforInput

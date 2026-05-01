@@ -47,8 +47,7 @@ export default function KakaoMap({ address, hospitalName }: KakaoMapProps) {
         } else {
           setError("위치를 찾을 수 없습니다");
         }
-      } catch (err) {
-        console.error(err);
+      } catch {
         setError("위치 검색 중 오류가 발생했습니다");
       } finally {
         setLoading(false);

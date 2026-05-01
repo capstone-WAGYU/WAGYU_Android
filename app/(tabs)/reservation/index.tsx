@@ -51,8 +51,7 @@ export default function ReservateScreen() {
 
       const totalElements = 2844;
       setTotalPages(Math.ceil(totalElements / PAGE_SIZE));
-    } catch (e) {
-      console.error(e);
+    } catch {
     } finally {
       setLoading(false);
     }
@@ -76,8 +75,7 @@ export default function ReservateScreen() {
       setHospitals(res.data.data.hospitals);
       setPage(0);
       setTotalPages(1);
-    } catch (e) {
-      console.error(e);
+    } catch {
     } finally {
       setLoading(false);
     }

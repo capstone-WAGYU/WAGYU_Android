@@ -117,11 +117,6 @@ export const petApi = {
   },
 
   deleteMe: async (): Promise<void> => {
-    try {
-      await apiClient.delete("/user/me");
-    } catch (error) {
-      console.error("회원 탈퇴 실패:", error);
-      throw error;
-    }
+    await apiClient.delete("/user/me");
   },
 };

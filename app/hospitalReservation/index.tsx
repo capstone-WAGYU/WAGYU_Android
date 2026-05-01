@@ -51,8 +51,7 @@ export default function HospitalReservation() {
         if (res.data.success) {
           setHospital(res.data.data);
         }
-      } catch (err) {
-        console.error(err);
+      } catch {
       } finally {
         setLoading(false);
       }

@@ -8,9 +8,11 @@ interface PetStore {
   diseases: Disease[];
   loading: boolean;
   error: string | null;
+  petImages: Record<number, string>;
 
   // Actions
   fetchPets: () => Promise<void>;
+  setPetImage: (petId: number, uri: string) => void;
   fetchBreeds: () => Promise<void>;
   fetchDiseasesByBreed: (breedId: number) => Promise<void>;
   addPet: (petData: {
@@ -33,6 +35,10 @@ export const usePetStore = create<PetStore>((set, get) => ({
   diseases: [],
   loading: false,
   error: null,
+  petImages: {},
+
+  setPetImage: (petId, uri) =>
+    set((state) => ({ petImages: { ...state.petImages, [petId]: uri } })),
 
   fetchPets: async () => {
     set({ loading: true, error: null });
@@ -41,7 +47,6 @@ export const usePetStore = create<PetStore>((set, get) => ({
       set({ pets, loading: false });
     } catch (error: any) {
       set({ error: error.message, loading: false });
-      console.error("반려동물 목록 조회 실패:", error);
     }
   },
 
@@ -52,7 +57,6 @@ export const usePetStore = create<PetStore>((set, get) => ({
       set({ breeds, loading: false });
     } catch (error: any) {
       set({ error: error.message, loading: false });
-      console.error("품종 목록 조회 실패:", error);
     }
   },
 
@@ -63,7 +67,6 @@ export const usePetStore = create<PetStore>((set, get) => ({
       set({ diseases, loading: false });
     } catch (error: any) {
       set({ error: error.message, loading: false });
-      console.error("유전병 목록 조회 실패:", error);
     }
   },
 
@@ -75,7 +78,6 @@ export const usePetStore = create<PetStore>((set, get) => ({
       set({ loading: false });
     } catch (error: any) {
       set({ error: error.message, loading: false });
-      console.error("반려동물 등록 실패:", error);
       throw error;
     }
   },

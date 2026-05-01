@@ -55,8 +55,7 @@ export default function Detail({ hospitalId, baseUrl }: DetailProps) {
             services: hospitalRes.data.data.services,
           });
         }
-      } catch (error) {
-        console.error("병원 상세 정보 조회 실패:", error);
+      } catch {
       } finally {
         setLoading(false);
       }

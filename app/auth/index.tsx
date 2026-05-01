@@ -22,15 +22,10 @@ export default function Login() {
     }
 
     try {
-      console.log("Login 요청 URL:", `${baseUrl}/auth/login`);
-      console.log("보내는 데이터:", { username, password });
-
       const response = await axios.post(`${baseUrl}/auth/login`, {
         username,
         password,
       });
-
-      console.log("응답:", response.data);
 
       const accessToken = response.data.data?.accessToken;
 
@@ -40,13 +35,7 @@ export default function Login() {
 
       await login(accessToken);
       router.replace("/(tabs)");
-    } catch (error: any) {
-      if (axios.isAxiosError(error)) {
-        console.log("Axios Error Message:", error.message);
-        console.log("Axios Response Data:", error.response?.data);
-      } else {
-        console.log("Other Error:", error);
-      }
+    } catch {
       Alert.alert("로그인 실패", "아이디 또는 비밀번호를 확인해주세요.");
     }
   };
