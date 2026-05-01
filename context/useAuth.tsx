@@ -10,6 +10,17 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
+// petApi 인터셉터에서 호출할 수 있도록 컨텍스트 외부에 콜백 등록
+let _sessionExpiredHandler: (() => void) | null = null;
+
+export const registerSessionExpiredHandler = (handler: () => void) => {
+  _sessionExpiredHandler = handler;
+};
+
+export const triggerSessionExpired = () => {
+  _sessionExpiredHandler?.();
+};
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -29,6 +40,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     checkAuth();
   }, []);
 
+  useEffect(() => {
+    registerSessionExpiredHandler(async () => {
+      await AsyncStorage.removeItem("accessToken");
+      await AsyncStorage.removeItem("refreshToken");
+      setIsLoggedIn(false);
+    });
+  }, []);
+
   const login = async (token: string) => {
     await AsyncStorage.setItem("accessToken", token);
     setIsLoggedIn(true);
@@ -36,6 +55,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logout = async () => {
     await AsyncStorage.removeItem("accessToken");
+    await AsyncStorage.removeItem("refreshToken");
     setIsLoggedIn(false);
   };
 

@@ -12,6 +12,8 @@ interface ReservationProps {
   hospitalId: number;
   baseUrl: string;
   onClosedChange?: (closed: boolean) => void;
+  onDateChange?: (date: string) => void;
+  onTimeChange?: (time: string | null) => void;
 }
 
 /* 🇰🇷 달력 한글 설정 */
@@ -61,6 +63,8 @@ export default function Reservation({
   hospitalId,
   baseUrl,
   onClosedChange,
+  onDateChange,
+  onTimeChange,
 }: ReservationProps) {
   const today = new Date().toISOString().split("T")[0];
 
@@ -154,7 +158,12 @@ export default function Reservation({
 
       <Calendar
         style={styles.calenderBox}
-        onDayPress={(day: DateData) => setSelectedDate(day.dateString)}
+        onDayPress={(day: DateData) => {
+          setSelectedDate(day.dateString);
+          setSelectedTime(null);
+          onDateChange?.(day.dateString);
+          onTimeChange?.(null);
+        }}
         markedDates={{
           [selectedDate]: {
             selected: true,
@@ -190,7 +199,7 @@ export default function Reservation({
                     key={t}
                     label={t}
                     selected={selectedTime === t}
-                    onPress={() => setSelectedTime(t)}
+                    onPress={() => { setSelectedTime(t); onTimeChange?.(t); }}
                   />
                 ))}
               </View>
@@ -206,7 +215,7 @@ export default function Reservation({
                     key={t}
                     label={t}
                     selected={selectedTime === t}
-                    onPress={() => setSelectedTime(t)}
+                    onPress={() => { setSelectedTime(t); onTimeChange?.(t); }}
                   />
                 ))}
               </View>

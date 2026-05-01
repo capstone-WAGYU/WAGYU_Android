@@ -4,8 +4,9 @@ import PhoneCard from "@/components/HospitalPage/reservationPage/PhoneCard";
 import PhoneEdit from "@/components/HospitalPage/reservationPage/PhoneEdit";
 import PetCard from "@/components/myPage/PetCard";
 import { usePetStore } from "@/store/petStore";
-import { router } from "expo-router";
-import React, { useState } from "react";
+import { useReservationStore } from "@/store/reservationStore";
+import { router, useLocalSearchParams } from "expo-router";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   ScrollView,
@@ -17,20 +18,41 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ReservationScreen() {
-  const { pets } = usePetStore();
-  const [selectedPetId, setSelectedPetId] = useState<number | null>(null);
+  const { pets, fetchPets } = usePetStore();
+  const { addReservation } = useReservationStore();
 
+  useEffect(() => {
+    if (pets.length === 0) fetchPets();
+  }, []);
+  const params = useLocalSearchParams<{
+    hospitalId: string;
+    hospitalName: string;
+    hospitalAddress: string;
+    date: string;
+    time: string;
+  }>();
+
+  const [selectedPetId, setSelectedPetId] = useState<number | null>(null);
   const [visitReason, setVisitReason] = useState("");
   const [request, setRequest] = useState("");
   const [phone, setPhone] = useState("010-1234-5678");
   const [phoneModalVisible, setPhoneModalVisible] = useState(false);
+  const [errors, setErrors] = useState<{ pet?: string; visitReason?: string }>({});
+
+  const validate = () => {
+    const newErrors: { pet?: string; visitReason?: string } = {};
+    if (!selectedPetId) newErrors.pet = "반려동물을 선택해주세요.";
+    if (!visitReason.trim()) newErrors.visitReason = "진료 받을 내용을 입력해주세요.";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <Header label={"예약 하기"} />
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        <Text style={styles.sectionTitle}>반려동물 선택</Text>
+        <Text style={styles.sectionTitle}>반려동물 선택 <Text style={styles.required}>*</Text></Text>
 
         {pets.map((pet) => {
           const isSelected = selectedPetId === pet.id;
@@ -63,6 +85,7 @@ export default function ReservationScreen() {
         {pets.length === 0 && (
           <Text style={styles.emptyText}>등록된 반려동물이 없습니다.</Text>
         )}
+        {errors.pet && <Text style={styles.errorText}>{errors.pet}</Text>}
 
         <View style={styles.inputSection}>
           <Text style={styles.inputLabel}>
@@ -81,6 +104,7 @@ export default function ReservationScreen() {
             />
             <Text style={styles.charCount}>{visitReason.length}/80</Text>
           </View>
+          {errors.visitReason && <Text style={styles.errorText}>{errors.visitReason}</Text>}
         </View>
 
         <View style={styles.divider} />
@@ -106,13 +130,28 @@ export default function ReservationScreen() {
 
         <NextButton
           label={"예약 완료"}
-          disabled={!selectedPetId || !visitReason.trim()}
           onPress={() => {
+            if (!validate()) return;
+
+            const selectedPet = pets.find((p) => p.id === selectedPetId);
+
+            addReservation({
+              id: Date.now().toString(),
+              hospitalId: Number(params.hospitalId) || 0,
+              hospitalName: params.hospitalName || "병원",
+              hospitalAddress: params.hospitalAddress || "",
+              date: params.date || "",
+              time: params.time || "",
+              petId: selectedPetId!,
+              petName: selectedPet?.name || "",
+              visitReason,
+              phone,
+              request,
+            });
+
             Alert.alert("예약 완료", "예약이 성공적으로 완료되었습니다.", [
-              { text: "확인" },
+              { text: "확인", onPress: () => router.push("/(tabs)/reservation") },
             ]);
-            router.push("/(tabs)/reservation");
-            console.log("선택된 반려견 ID:", selectedPetId);
           }}
         />
       </ScrollView>
@@ -194,5 +233,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#f5f5f5",
     marginHorizontal: -20,
     marginTop: 25,
+  },
+  errorText: {
+    fontSize: 12,
+    color: "red",
+    marginTop: 6,
   },
 });

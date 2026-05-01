@@ -2,14 +2,31 @@ import AddAnnounceButton from "@/components/mainPage/AddAnnounceButton";
 import ReservateCheckCard from "@/components/mainPage/ReservateCheckCard";
 import SmallCustomButton from "@/components/mainPage/SmallCustomButton";
 import { colors } from "@/constants";
+import { useReservationStore } from "@/store/reservationStore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
-import { useEffect } from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { useEffect, useState } from "react";
+import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+const formatReservationTime = (date: string, time: string) => {
+  if (!date) return "날짜 미정";
+  const d = new Date(date + "T00:00:00");
+  const days = ["일", "월", "화", "수", "목", "금", "토"];
+  const day = days[d.getDay()];
+  const formatted = date.replace(/-/g, ".");
+  return time
+    ? `${formatted} (${day}) ${time} 예약예정`
+    : `${formatted} (${day}) 예약예정`;
+};
+
 export default function HomeScreen() {
+  const { reservations } = useReservationStore();
+  const [showAll, setShowAll] = useState(false);
+
+  const displayed = showAll ? reservations : reservations.slice(0, 1);
+
   useEffect(() => {
     const checkToken = async () => {
       const token = await AsyncStorage.getItem("accessToken");
@@ -73,12 +90,30 @@ export default function HomeScreen() {
           </View>
         </View>
       </LinearGradient>
-      <ReservateCheckCard
-        label={"피부염"}
-        time={"2025.09.25 (목) 14:00 예약예정"}
-        location={"장소: 동대구 동물병원"}
-      />
-      <AddAnnounceButton label={"예약 더보기"} />
+      <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+        {reservations.length === 0 ? (
+          <ReservateCheckCard
+            label="예약 내역 없음"
+            time="아직 예약된 내역이 없습니다"
+            location="예약 탭으로 이동하여 예약해 보세요!"
+          />
+        ) : (
+          displayed.map((r) => (
+            <ReservateCheckCard
+              key={r.id}
+              label={r.visitReason}
+              time={formatReservationTime(r.date, r.time)}
+              location={`장소: ${r.hospitalName}`}
+            />
+          ))
+        )}
+        {reservations.length > 1 && (
+          <AddAnnounceButton
+            label={showAll ? "접기" : "예약 더보기"}
+            onPress={() => setShowAll((prev) => !prev)}
+          />
+        )}
+      </ScrollView>
     </SafeAreaView>
   );
 }

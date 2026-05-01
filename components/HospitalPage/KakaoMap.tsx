@@ -34,7 +34,7 @@ export default function KakaoMap({ address, hospitalName }: KakaoMapProps) {
             params: {
               query: address,
             },
-          }
+          },
         );
 
         if (res.data.documents.length > 0) {

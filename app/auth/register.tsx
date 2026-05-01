@@ -50,9 +50,21 @@ export default function Register() {
 
       Alert.alert("회원가입 성공", "로그인해 주세요");
       router.push("/auth");
-    } catch (error) {
-      Alert.alert("회원가입 실패", "모든 정보를 기입해 주세요");
-      console.error(error);
+    } catch (error: any) {
+      const status = error?.response?.status;
+      const serverMessage = error?.response?.data?.message;
+
+      console.error("회원가입 에러:", status, serverMessage, error);
+
+      if (status === 409) {
+        Alert.alert("회원가입 실패", "이미 사용 중인 아이디입니다.");
+      } else if (status === 400) {
+        Alert.alert("회원가입 실패", serverMessage || "입력 정보를 확인해 주세요.");
+      } else if (status === 403) {
+        Alert.alert("회원가입 실패", "접근이 거부되었습니다. 서버 설정을 확인해주세요.");
+      } else {
+        Alert.alert("회원가입 실패", serverMessage || "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+      }
     }
   };
 

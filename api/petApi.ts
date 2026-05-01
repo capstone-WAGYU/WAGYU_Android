@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import { triggerSessionExpired } from "@/context/useAuth";
 
 const baseUrl = process.env.EXPO_PUBLIC_BACKEND_API_URL;
 
@@ -25,6 +26,17 @@ apiClient.interceptors.request.use(async (config) => {
   }
   return config;
 });
+
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const status = error.response?.status;
+    if (status === 401 || status === 403) {
+      triggerSessionExpired();
+    }
+    return Promise.reject(error);
+  }
+);
 
 export interface Breed {
   id: number;

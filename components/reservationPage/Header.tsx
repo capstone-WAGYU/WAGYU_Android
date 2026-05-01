@@ -1,13 +1,5 @@
-import EvilIcons from "@expo/vector-icons/EvilIcons";
-import { router } from "expo-router";
 import React from "react";
-import {
-  Pressable,
-  PressableProps,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { PressableProps, StyleSheet, Text, View } from "react-native";
 interface HeaderProps extends PressableProps {
   label: string;
   variant?: "filled";
@@ -16,18 +8,18 @@ interface HeaderProps extends PressableProps {
 function Header({ label, variant = "filled", ...props }: HeaderProps) {
   return (
     <View style={styles.container}>
-      <View style={styles.emtiy} />
+      {/* <View style={styles.emtiy} /> */}
       <View style={styles.titleContainer}>
         <Text style={styles.title}>{label}</Text>
       </View>
-      <Pressable
+      {/* <Pressable
         style={({ pressed }) => [styles.icon, pressed && styles.pressed]}
         {...props}
         onPress={() => router.push("/address")}
       >
         <Text>내위치</Text>
         <EvilIcons name="location" size={24} color="black" />
-      </Pressable>
+      </Pressable> */}
     </View>
   );
 }

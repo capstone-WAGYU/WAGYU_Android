@@ -22,6 +22,9 @@ export default function HospitalReservation() {
   >("reservation");
 
   const [isClosed, setIsClosed] = useState(false);
+  const today = new Date().toISOString().split("T")[0];
+  const [selectedDate, setSelectedDate] = useState(today);
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
   const params = useLocalSearchParams();
   const hospitalId = params.id ? Number(params.id) : null;
@@ -60,7 +63,16 @@ export default function HospitalReservation() {
 
   const goReservationDetail = () => {
     if (isClosed) return;
-    router.push("/reservationDetail");
+    router.push({
+      pathname: "/reservationDetail",
+      params: {
+        hospitalId: hospitalId,
+        hospitalName: hospital?.name ?? "",
+        hospitalAddress: hospital?.address ?? "",
+        date: selectedDate,
+        time: selectedTime ?? "",
+      },
+    });
   };
 
   if (loading)
@@ -97,6 +109,8 @@ export default function HospitalReservation() {
               hospitalId={hospitalId!}
               baseUrl={baseUrl}
               onClosedChange={setIsClosed}
+              onDateChange={setSelectedDate}
+              onTimeChange={setSelectedTime}
             />
 
             <View style={styles.nextButtonContainer}>

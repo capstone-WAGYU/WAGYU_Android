@@ -72,7 +72,7 @@ export default function AdviceScreen() {
     setLoading(true);
 
     setLoadingText(
-      loadingMessages[Math.floor(Math.random() * loadingMessages.length)]
+      loadingMessages[Math.floor(Math.random() * loadingMessages.length)],
     );
 
     setMessages((prev) => [...prev, { sender: "user", text: userText }]);
@@ -110,7 +110,8 @@ export default function AdviceScreen() {
 
       if (!res.ok) throw new Error("Server error");
 
-      const fullText = await res.text();
+      const json = await res.json();
+      const fullText = json.text || "";
       await typeText(fullText, botIndex);
     } catch (err) {
       console.log("ERROR:", err);
