@@ -1,3 +1,4 @@
+import { petApi } from "@/api/petApi";
 import NextButton from "@/components/authPage/NextButton";
 import Header from "@/components/HospitalPage/Header";
 import PhoneCard from "@/components/HospitalPage/reservationPage/PhoneCard";
@@ -19,11 +20,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ReservationScreen() {
   const { pets, fetchPets } = usePetStore();
-  const { addReservation } = useReservationStore();
+  const { fetchReservations } = useReservationStore();
 
   useEffect(() => {
     if (pets.length === 0) fetchPets();
-  }, []);
+  }, [pets.length, fetchPets]);
+
   const params = useLocalSearchParams<{
     hospitalId: string;
     hospitalName: string;
@@ -37,6 +39,7 @@ export default function ReservationScreen() {
   const [request, setRequest] = useState("");
   const [phone, setPhone] = useState("010-1234-5678");
   const [phoneModalVisible, setPhoneModalVisible] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<{ pet?: string; visitReason?: string }>({});
 
   const validate = () => {
@@ -47,12 +50,45 @@ export default function ReservationScreen() {
     return Object.keys(newErrors).length === 0;
   };
 
+  const handleSubmit = async () => {
+    if (!validate()) return;
+
+    const timeStr = params.time || "09:00";
+    const [hour, minute] = timeStr.split(":").map(Number);
+    const timeFormatted = `${String(hour || 9).padStart(2, "0")}:${String(minute || 0).padStart(2, "0")}:00`;
+
+    setSubmitting(true);
+    try {
+      await petApi.createReservation(Number(params.hospitalId), {
+        petId: selectedPetId!,
+        date: params.date || new Date().toISOString().split("T")[0],
+        time: timeFormatted,
+        reason: visitReason,
+        comment: request,
+      });
+
+      await fetchReservations();
+
+      Alert.alert("예약 완료", "예약이 성공적으로 완료되었습니다.", [
+        { text: "확인", onPress: () => router.push("/(tabs)/reservation") },
+      ]);
+    } catch (error: any) {
+      const status = error?.response?.status;
+      const msg = error?.response?.data?.message || error?.message || "알 수 없는 오류";
+      Alert.alert("예약 실패", `(${status ?? "network"}) ${msg}`);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <Header label={"예약 하기"} />
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        <Text style={styles.sectionTitle}>반려동물 선택 <Text style={styles.required}>*</Text></Text>
+        <Text style={styles.sectionTitle}>
+          반려동물 선택 <Text style={styles.required}>*</Text>
+        </Text>
 
         {pets.map((pet) => {
           const isSelected = selectedPetId === pet.id;
@@ -105,7 +141,9 @@ export default function ReservationScreen() {
             />
             <Text style={styles.charCount}>{visitReason.length}/80</Text>
           </View>
-          {errors.visitReason && <Text style={styles.errorText}>{errors.visitReason}</Text>}
+          {errors.visitReason && (
+            <Text style={styles.errorText}>{errors.visitReason}</Text>
+          )}
         </View>
 
         <View style={styles.divider} />
@@ -130,30 +168,9 @@ export default function ReservationScreen() {
         </View>
 
         <NextButton
-          label={"예약 완료"}
-          onPress={() => {
-            if (!validate()) return;
-
-            const selectedPet = pets.find((p) => p.id === selectedPetId);
-
-            addReservation({
-              id: Date.now().toString(),
-              hospitalId: Number(params.hospitalId) || 0,
-              hospitalName: params.hospitalName || "병원",
-              hospitalAddress: params.hospitalAddress || "",
-              date: params.date || "",
-              time: params.time || "",
-              petId: selectedPetId!,
-              petName: selectedPet?.name || "",
-              visitReason,
-              phone,
-              request,
-            });
-
-            Alert.alert("예약 완료", "예약이 성공적으로 완료되었습니다.", [
-              { text: "확인", onPress: () => router.push("/(tabs)/reservation") },
-            ]);
-          }}
+          label={submitting ? "예약 중..." : "예약 완료"}
+          onPress={handleSubmit}
+          disabled={submitting}
         />
       </ScrollView>
 

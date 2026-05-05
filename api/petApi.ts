@@ -27,13 +27,52 @@ apiClient.interceptors.request.use(async (config) => {
   return config;
 });
 
+// 동시에 여러 401이 오더라도 refresh는 한 번만
+let isRefreshing = false;
+let refreshQueue: ((token: string) => void)[] = [];
+
 apiClient.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
+    const originalRequest = error.config;
     const status = error.response?.status;
-    if (status === 401 || status === 403) {
-      triggerSessionExpired();
+
+    if (status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      if (isRefreshing) {
+        return new Promise((resolve) => {
+          refreshQueue.push((token) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            resolve(apiClient(originalRequest));
+          });
+        });
+      }
+
+      isRefreshing = true;
+      try {
+        const refreshToken = await AsyncStorage.getItem("refreshToken");
+        if (!refreshToken) throw new Error("no refresh token");
+
+        const res = await axios.post(`${baseUrl}/auth/refresh`, { refreshToken });
+        const newToken = res.data.data.accessToken;
+
+        await AsyncStorage.setItem("accessToken", newToken);
+
+        refreshQueue.forEach((cb) => cb(newToken));
+        refreshQueue = [];
+
+        originalRequest.headers.Authorization = `Bearer ${newToken}`;
+        return apiClient(originalRequest);
+      } catch {
+        refreshQueue = [];
+        triggerSessionExpired();
+        return Promise.reject(error);
+      } finally {
+        isRefreshing = false;
+      }
     }
+
     return Promise.reject(error);
   }
 );
@@ -76,6 +115,36 @@ export interface LoginResponse {
   refreshToken: string;
 }
 
+export interface LocalTime {
+  hour: number;
+  minute: number;
+  second: number;
+  nano: number;
+}
+
+export interface ReservationSummary {
+  id: number;
+  hospitalName: string;
+  petName: string;
+  date: string;
+  time: LocalTime | string;
+  status: "PENDING" | "ACCEPTED" | "RESOLVED" | "REJECTED";
+}
+
+export interface ReservationDetail {
+  id: number;
+  pet: { id: number; name: string };
+  hospital: { id: number; name: string };
+  date: string;
+  time: LocalTime | string;
+  reason: string;
+  comment: string;
+  status: "PENDING" | "ACCEPTED" | "RESOLVED" | "REJECTED";
+  hospitalComment: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export const petApi = {
   login: async (data: LoginRequest): Promise<LoginResponse> => {
     const res = await apiClient.post("/auth/login", data);
@@ -110,13 +179,38 @@ export const petApi = {
     await apiClient.put(`/pet/${petId}`, data);
   },
 
+  deletePet: async (petId: number): Promise<void> => {
+    await apiClient.delete(`/pet/${petId}`);
+  },
+
   updatePhone: async (phoneNum: string): Promise<void> => {
-    await apiClient.patch("/user/phone", {
-      phoneNum,
-    });
+    await apiClient.patch("/user/phone", { phoneNum });
   },
 
   deleteMe: async (): Promise<void> => {
     await apiClient.delete("/user/me");
+  },
+
+  createReservation: async (
+    hospitalId: number,
+    data: {
+      petId: number;
+      date: string;
+      time: string;
+      reason: string;
+      comment: string;
+    }
+  ): Promise<void> => {
+    await apiClient.post(`/hospital/${hospitalId}/reservation`, data);
+  },
+
+  getReservations: async (): Promise<ReservationSummary[]> => {
+    const res = await apiClient.get("/reservation");
+    return res.data.data.reservations;
+  },
+
+  getReservationDetail: async (id: number): Promise<ReservationDetail> => {
+    const res = await apiClient.get(`/reservation/${id}`);
+    return res.data.data;
   },
 };

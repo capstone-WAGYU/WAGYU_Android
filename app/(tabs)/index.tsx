@@ -22,7 +22,7 @@ const formatReservationTime = (date: string, time: string) => {
 };
 
 export default function HomeScreen() {
-  const { reservations } = useReservationStore();
+  const { reservations, fetchReservations } = useReservationStore();
   const [showAll, setShowAll] = useState(false);
 
   const displayed = showAll ? reservations : reservations.slice(0, 1);
@@ -33,11 +33,14 @@ export default function HomeScreen() {
 
       if (!token) {
         router.replace("/auth");
+        return;
       }
+
+      fetchReservations();
     };
 
     checkToken();
-  }, []);
+  }, [fetchReservations]);
   return (
     <SafeAreaView style={styles.background}>
       <View style={styles.headerContainer}>
@@ -105,9 +108,10 @@ export default function HomeScreen() {
           displayed.map((r) => (
             <ReservateCheckCard
               key={r.id}
-              label={r.visitReason}
+              label={r.petName ? `${r.petName} 진료 예약` : r.visitReason}
               time={formatReservationTime(r.date, r.time)}
               location={`장소: ${r.hospitalName}`}
+              onPress={() => router.push({ pathname: "/reservationInfo", params: { id: r.id } })}
             />
           ))
         )}

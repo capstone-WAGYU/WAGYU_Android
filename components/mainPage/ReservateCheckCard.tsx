@@ -1,6 +1,6 @@
 import { colors } from "@/constants";
 import React from "react";
-import { PressableProps, StyleSheet, Text, View } from "react-native";
+import { Pressable, PressableProps, StyleSheet, Text, View } from "react-native";
 
 interface ReservateCheckCardProps extends PressableProps {
   label: string;
@@ -16,15 +16,22 @@ function ReservateCheckCard({
   location,
   size = "large",
   variant = "filled",
+  onPress,
   ...props
 }: ReservateCheckCardProps) {
   return (
-    <View style={styles.container}>
+    <Pressable
+      style={({ pressed }) => [styles.container, pressed && onPress && styles.pressed]}
+      onPress={onPress}
+      {...props}
+    >
       <View style={styles.reservateAnnounceContainer}>
+        <Text style={styles.label}>{label}</Text>
         <Text style={styles.time}>{time}</Text>
         <Text style={styles.location}>{location}</Text>
       </View>
-    </View>
+      {onPress && <Text style={styles.arrow}>➔</Text>}
+    </Pressable>
   );
 }
 
@@ -37,36 +44,36 @@ const styles = StyleSheet.create({
     padding: 20,
     marginVertical: 5,
     justifyContent: "space-between",
-  },
-  acheImgContainer: {
-    justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 10,
-    // flex: 2,
-  },
-  acheImg: {
-    // backgroundColor: colors.GRAY2,
-    width: 40,
-    height: 40,
-    flexDirection: "column",
-    borderRadius: 100,
   },
   reservateAnnounceContainer: {
-    // flex: 4,
-    gap: 5,
+    gap: 4,
     flexDirection: "column",
     justifyContent: "center",
+    flex: 1,
+  },
+  label: {
+    fontWeight: "700",
+    fontSize: 15,
+    color: colors.Black,
+  },
+  time: {
+    fontWeight: "500",
+    fontSize: 13,
+    color: colors.GRAY1,
   },
   location: {
     color: colors.GRAY2,
+    fontSize: 12,
     fontWeight: "500",
   },
-  time: {
-    fontWeight: "600",
-    fontSize: 16,
+  arrow: {
+    fontSize: 14,
+    color: colors.GRAY3,
+    paddingLeft: 10,
   },
-  text: {
-    color: colors.GRAY1,
+  pressed: {
+    opacity: 0.7,
   },
 });
 

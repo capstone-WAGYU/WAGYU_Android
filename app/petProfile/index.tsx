@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -40,6 +41,7 @@ export default function PetProfile() {
     fetchBreeds,
     fetchDiseasesByBreed,
     addPet,
+    deletePet,
     clearDiseases,
     setPetImage,
   } = usePetStore();
@@ -215,19 +217,58 @@ export default function PetProfile() {
         />
 
         <View style={styles.goBottom}>
-          <NextButton
-            label={
-              loading
-                ? isEditMode
-                  ? "수정 중..."
-                  : "등록 중..."
-                : isEditMode
-                  ? "수정 완료"
-                  : "입력 완료"
-            }
-            onPress={handleSubmit}
-            disabled={loading}
-          />
+          {isEditMode ? (
+            <View style={styles.buttonRow}>
+              <View style={{ flex: 2 }}>
+                <NextButton
+                  label={loading ? "수정 중..." : "수정 완료"}
+                  onPress={handleSubmit}
+                  disabled={loading}
+                />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.deleteBtn,
+                    loading && styles.deleteBtnDisabled,
+                    pressed && !loading && styles.pressed,
+                  ]}
+                  onPress={() => {
+                    Alert.alert(
+                      "삭제 확인",
+                      `${name}을(를) 삭제하시겠습니까?`,
+                      [
+                        { text: "취소", style: "cancel" },
+                        {
+                          text: "삭제",
+                          style: "destructive",
+                          onPress: async () => {
+                            try {
+                              await deletePet(Number(petId));
+                              Alert.alert("완료", "반려동물이 삭제되었습니다.", [
+                                { text: "확인", onPress: () => router.replace("/(tabs)/my") },
+                              ]);
+                            } catch {
+                              Alert.alert("오류", "삭제에 실패했습니다.");
+                            }
+                          },
+                        },
+                      ]
+                    );
+                  }}
+                  disabled={loading}
+                >
+                  <Text style={styles.deleteBtnText}>삭제</Text>
+                </Pressable>
+              </View>
+            </View>
+          ) : (
+            <NextButton
+              label={loading ? "등록 중..." : "입력 완료"}
+              onPress={handleSubmit}
+              disabled={loading}
+            />
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -258,6 +299,28 @@ const styles = StyleSheet.create({
   goBottom: {
     marginTop: 40,
     marginBottom: 20,
+  },
+  buttonRow: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  deleteBtn: {
+    flex: 1,
+    height: 45,
+    borderRadius: 5,
+    backgroundColor: "#E53935",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  deleteBtnDisabled: {
+    backgroundColor: colors.GRAY5,
+  },
+  deleteBtnText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+  pressed: {
+    opacity: 0.8,
   },
   loadingContainer: {
     flex: 1,

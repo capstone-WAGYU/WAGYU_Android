@@ -1,11 +1,6 @@
 import { usePetStore } from "@/store/petStore";
 import { useReservationStore } from "@/store/reservationStore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-const clearAllStores = () => {
-  usePetStore.getState().clearAll();
-  useReservationStore.getState().clearReservations();
-};
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 interface AuthContextType {
@@ -17,15 +12,22 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-// petApi 인터셉터에서 호출할 수 있도록 컨텍스트 외부에 콜백 등록
 let _sessionExpiredHandler: (() => void) | null = null;
+let _expiryTriggered = false;
 
 export const registerSessionExpiredHandler = (handler: () => void) => {
   _sessionExpiredHandler = handler;
 };
 
 export const triggerSessionExpired = () => {
+  if (_expiryTriggered) return;
+  _expiryTriggered = true;
   _sessionExpiredHandler?.();
+};
+
+const clearAllStores = () => {
+  usePetStore.getState().clearAll();
+  useReservationStore.getState().clearReservations();
 };
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -37,7 +39,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       try {
         const token = await AsyncStorage.getItem("accessToken");
         setIsLoggedIn(!!token);
-      } catch (e) {
+      } catch {
         setIsLoggedIn(false);
       } finally {
         setIsLoading(false);
@@ -57,6 +59,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const login = async (token: string) => {
+    _expiryTriggered = false;
     await AsyncStorage.setItem("accessToken", token);
     setIsLoggedIn(true);
   };

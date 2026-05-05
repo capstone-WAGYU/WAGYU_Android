@@ -35,8 +35,15 @@ export default function Login() {
 
       await login(accessToken);
       router.replace("/(tabs)");
-    } catch {
-      Alert.alert("로그인 실패", "아이디 또는 비밀번호를 확인해주세요.");
+    } catch (error: any) {
+      const status = error?.response?.status;
+      const msg =
+        status === 401
+          ? "아이디 또는 비밀번호를 확인해주세요."
+          : status
+            ? `서버 오류 (${status})`
+            : "네트워크 연결을 확인해주세요.";
+      Alert.alert("로그인 실패", msg);
     }
   };
 

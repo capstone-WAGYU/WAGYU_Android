@@ -23,6 +23,7 @@ interface PetStore {
     diseaseIds: number[];
     imageUri?: string;
   }) => Promise<void>;
+  deletePet: (petId: number) => Promise<void>;
   updatePetInStore: (id: number, updatedPet: Pet) => void;
   setPets: (pets: Pet[]) => void;
   clearAll: () => void;
@@ -77,6 +78,20 @@ export const usePetStore = create<PetStore>((set, get) => ({
       await petApi.createPet(petData);
       await get().fetchPets();
       set({ loading: false });
+    } catch (error: any) {
+      set({ error: error.message, loading: false });
+      throw error;
+    }
+  },
+
+  deletePet: async (petId: number) => {
+    set({ loading: true, error: null });
+    try {
+      await petApi.deletePet(petId);
+      set((state) => ({
+        pets: state.pets.filter((p) => p.id !== petId),
+        loading: false,
+      }));
     } catch (error: any) {
       set({ error: error.message, loading: false });
       throw error;
