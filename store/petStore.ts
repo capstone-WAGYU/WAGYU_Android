@@ -25,6 +25,7 @@ interface PetStore {
   }) => Promise<void>;
   updatePetInStore: (id: number, updatedPet: Pet) => void;
   setPets: (pets: Pet[]) => void;
+  clearAll: () => void;
   clearDiseases: () => void;
   clearError: () => void;
 }
@@ -90,6 +91,7 @@ export const usePetStore = create<PetStore>((set, get) => ({
 
   setPets: (pets: Pet[]) => set({ pets }),
 
+  clearAll: () => set({ pets: [], breeds: [], diseases: [], petImages: {}, error: null }),
   clearDiseases: () => set({ diseases: [] }),
   clearError: () => set({ error: null }),
 }));

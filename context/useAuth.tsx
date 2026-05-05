@@ -1,4 +1,11 @@
+import { usePetStore } from "@/store/petStore";
+import { useReservationStore } from "@/store/reservationStore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const clearAllStores = () => {
+  usePetStore.getState().clearAll();
+  useReservationStore.getState().clearReservations();
+};
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 interface AuthContextType {
@@ -44,6 +51,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     registerSessionExpiredHandler(async () => {
       await AsyncStorage.removeItem("accessToken");
       await AsyncStorage.removeItem("refreshToken");
+      clearAllStores();
       setIsLoggedIn(false);
     });
   }, []);
@@ -56,6 +64,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const logout = async () => {
     await AsyncStorage.removeItem("accessToken");
     await AsyncStorage.removeItem("refreshToken");
+    clearAllStores();
     setIsLoggedIn(false);
   };
 

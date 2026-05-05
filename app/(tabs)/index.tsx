@@ -90,7 +90,11 @@ export default function HomeScreen() {
           </View>
         </View>
       </LinearGradient>
-      <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingBottom: 80 }}
+        showsVerticalScrollIndicator={false}
+      >
         {reservations.length === 0 ? (
           <ReservateCheckCard
             label="예약 내역 없음"
@@ -109,7 +113,8 @@ export default function HomeScreen() {
         )}
         {reservations.length > 1 && (
           <AddAnnounceButton
-            label={showAll ? "접기" : "예약 더보기"}
+            label={showAll ? "간략히" : "예약 더보기"}
+            iconName={showAll ? "keyboard-arrow-up" : "keyboard-arrow-down"}
             onPress={() => setShowAll((prev) => !prev)}
           />
         )}

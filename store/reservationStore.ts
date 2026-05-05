@@ -18,6 +18,7 @@ interface ReservationStore {
   reservations: Reservation[];
   addReservation: (r: Reservation) => void;
   removeReservation: (id: string) => void;
+  clearReservations: () => void;
 }
 
 export const useReservationStore = create<ReservationStore>((set) => ({
@@ -28,4 +29,5 @@ export const useReservationStore = create<ReservationStore>((set) => ({
     set((state) => ({
       reservations: state.reservations.filter((r) => r.id !== id),
     })),
+  clearReservations: () => set({ reservations: [] }),
 }));

@@ -5,12 +5,14 @@ import { Pressable, PressableProps, StyleSheet, Text } from "react-native";
 
 interface AddAnnounceButtonProps extends PressableProps {
   label: string;
+  iconName?: "keyboard-arrow-down" | "keyboard-arrow-up";
   size?: "medium" | "large";
   variant?: "filled";
 }
 
 function AddAnnounceButton({
   label,
+  iconName = "keyboard-arrow-down",
   size = "large",
   variant = "filled",
   ...props
@@ -26,7 +28,7 @@ function AddAnnounceButton({
       {...props}
     >
       <MaterialIcons
-        name="keyboard-arrow-down"
+        name={iconName}
         size={24}
         color={colors.GRAY0}
       />
