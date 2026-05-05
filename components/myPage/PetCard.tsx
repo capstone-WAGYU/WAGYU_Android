@@ -18,6 +18,7 @@ interface PetCardProps extends PressableProps {
   date: string;
   size?: "medium" | "large";
   disableNavigation?: boolean;
+  selected?: boolean;
 }
 
 function PetCard({
@@ -27,6 +28,7 @@ function PetCard({
   date,
   size = "large",
   disableNavigation = false,
+  selected = false,
   onPress,
   ...props
 }: PetCardProps) {
@@ -55,7 +57,7 @@ function PetCard({
       {...props}
       onPress={handlePress}
     >
-      <View style={styles.container}>
+      <View style={[styles.container, selected && styles.selectedContainer]}>
         <View style={styles.infoContainer}>
           <View style={styles.imgContainer}>
             <Image
@@ -119,6 +121,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.GRAY3,
     paddingHorizontal: 18,
+  },
+  selectedContainer: {
+    borderColor: colors.MainColor,
+    borderWidth: 2,
   },
   pressed: {
     opacity: 0.8,

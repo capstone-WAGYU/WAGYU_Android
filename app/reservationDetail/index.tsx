@@ -76,7 +76,8 @@ export default function ReservationScreen() {
                   .replace(/\. /g, ".")
                   .replace(/\.$/, "")}
                 onPress={() => setSelectedPetId(pet.id)}
-                style={[styles.petCard, isSelected && styles.selectedPetCard]}
+                selected={isSelected}
+                disableNavigation
               />
             </View>
           );
@@ -185,10 +186,6 @@ const styles = StyleSheet.create({
   petCardWrapper: {
     marginBottom: 10,
   },
-  petCard: {
-    marginBottom: 0,
-  },
-  selectedPetCard: {},
   disabledCard: {
     opacity: 0.4,
   },
