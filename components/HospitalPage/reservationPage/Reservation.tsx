@@ -66,7 +66,9 @@ export default function Reservation({
   onDateChange,
   onTimeChange,
 }: ReservationProps) {
-  const today = new Date().toISOString().split("T")[0];
+  const now = new Date();
+  const today = now.toISOString().split("T")[0];
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
   const [selectedDate, setSelectedDate] = useState(today);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
@@ -126,18 +128,21 @@ export default function Reservation({
 
     let cur = oh * 60 + om;
     const end = ch * 60 + cm;
+    const isToday = selectedDate === today;
 
     const slots: string[] = [];
     while (cur < end) {
-      const h = Math.floor(cur / 60);
-      const m = cur % 60;
-      slots.push(
-        `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`
-      );
+      if (!isToday || cur > currentMinutes) {
+        const h = Math.floor(cur / 60);
+        const m = cur % 60;
+        slots.push(
+          `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`
+        );
+      }
       cur += 60;
     }
     return slots;
-  }, [schedule]);
+  }, [schedule, selectedDate, today, currentMinutes]);
 
   const amSlots = timeSlots.filter((t) => Number(t.split(":")[0]) < 12);
   const pmSlots = timeSlots.filter((t) => Number(t.split(":")[0]) >= 12);
@@ -169,6 +174,7 @@ export default function Reservation({
             selectedColor: colors.MainColor,
           },
         }}
+        minDate={today}
         monthFormat={"yyyy.MM"}
         theme={{
           todayTextColor: colors.MainColor,

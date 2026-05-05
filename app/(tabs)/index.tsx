@@ -25,7 +25,12 @@ export default function HomeScreen() {
   const { reservations, fetchReservations } = useReservationStore();
   const [showAll, setShowAll] = useState(false);
 
-  const displayed = showAll ? reservations : reservations.slice(0, 1);
+  const sorted = [...reservations].sort((a, b) => {
+    const aKey = a.date + "T" + (a.time || "00:00");
+    const bKey = b.date + "T" + (b.time || "00:00");
+    return aKey.localeCompare(bKey);
+  });
+  const displayed = showAll ? sorted : sorted.slice(0, 1);
 
   useEffect(() => {
     const checkToken = async () => {
@@ -98,7 +103,7 @@ export default function HomeScreen() {
         contentContainerStyle={{ paddingBottom: 80 }}
         showsVerticalScrollIndicator={false}
       >
-        {reservations.length === 0 ? (
+        {sorted.length === 0 ? (
           <ReservateCheckCard
             label="예약 내역 없음"
             time="아직 예약된 내역이 없습니다"
@@ -115,7 +120,7 @@ export default function HomeScreen() {
             />
           ))
         )}
-        {reservations.length > 1 && (
+        {sorted.length > 1 && (
           <AddAnnounceButton
             label={showAll ? "간략히" : "예약 더보기"}
             iconName={showAll ? "keyboard-arrow-up" : "keyboard-arrow-down"}
