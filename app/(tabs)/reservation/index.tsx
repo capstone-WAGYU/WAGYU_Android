@@ -57,7 +57,6 @@ export default function ReservateScreen() {
     }
   };
 
-  /** 🔥 병원 검색 */
   const searchHospitals = async () => {
     if (!keyword.trim()) {
       fetchHospitals(0);

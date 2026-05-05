@@ -100,7 +100,7 @@ export default function HomeScreen() {
       </LinearGradient>
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: 80 }}
+        contentContainerStyle={{ paddingBottom: 50 }}
         showsVerticalScrollIndicator={false}
       >
         {sorted.length === 0 ? (
@@ -116,7 +116,12 @@ export default function HomeScreen() {
               label={r.petName ? `${r.petName} 진료 예약` : r.visitReason}
               time={formatReservationTime(r.date, r.time)}
               location={`장소: ${r.hospitalName}`}
-              onPress={() => router.push({ pathname: "/reservationInfo", params: { id: r.id } })}
+              onPress={() =>
+                router.push({
+                  pathname: "/reservationInfo",
+                  params: { id: r.id },
+                })
+              }
             />
           ))
         )}
